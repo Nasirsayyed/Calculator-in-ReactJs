@@ -1,6 +1,6 @@
 # Calculator Platform
 
-A premium, multi-mode calculator platform built with React 19, TypeScript, and Vite — 11 calculator tools live today (Standard, Scientific, and 9 finance/health/utility calculators), architected to grow into 30+ without a rewrite.
+A premium, multi-mode calculator platform built with React 19, TypeScript, and Vite — **35 calculator tools**, all live: Standard, Scientific, Programmer, and 32 finance/health/math/utility calculators, each its own route.
 
 This repository was rebuilt from a single-file Create React App calculator into a modular, tested, accessible, installable web app. It replaces the original `Function("return " + expression)()` evaluator with a sandboxed math parser, and replaces the flat component tree with a layered architecture (components / hooks / context / store / parser / services).
 
@@ -31,13 +31,20 @@ This repository was rebuilt from a single-file Create React App calculator into 
 
 **Memory** — MC / MR / MS / M+ / M‑, a named multi‑value memory bank with inline rename and delete, persisted to `localStorage`.
 
-**Utility calculators** — Percentage (of / is-what-percent / % change), Discount, GST (add or extract), Tip (with split-by-people), BMI (metric or imperial, WHO category), Age (years/months/days + total days lived), Simple Interest, Compound Interest (yearly/half-yearly/quarterly/monthly), and EMI (loan amount, rate, tenure in years or months). Each is a pure, unit-tested calculation function plus a small, consistent form UI — reachable from the "Browse calculators" launcher (searchable, grouped by category) or a direct URL (`/bmi`, `/emi`, etc.), with the browser back button and offline navigation both working correctly.
+**Programmer mode** — live BIN/OCT/DEC/HEX conversion of a single value, plus 32-bit unsigned bitwise operations (AND, OR, XOR, NOT, `<<`, `>>`) with the result shown in all four bases.
+
+**32 finance/health/math/utility calculators** — each a pure, unit-tested calculation function plus a small, consistent form UI, reachable from the "Browse calculators" launcher (searchable, grouped by category) or a direct URL (`/bmi`, `/emi`, `/matrix`, etc.), with the browser back button and offline navigation both working correctly:
+
+- **Finance** — Discount, GST (add/extract), EMI, Loan (with a yearly amortization breakdown), Mortgage, Currency (manual exchange rate), Investment (compound growth with monthly contributions), Compound Interest, Simple Interest, Profit & Loss, Margin
+- **Health & Date** — Age, BMI (metric/imperial), Date Calculator (difference between dates, or add/subtract days)
+- **Math** — LCM/GCD, Statistics (mean/range/variance/std-dev), Probability (nPr/nCr/event probability), Quadratic Solver (real or complex roots), Equation Solver (2×2 linear systems via Cramer's rule), Matrix Calculator (2×2, add/subtract/multiply/transpose/determinant), Vector Calculator (2D/3D, dot/cross product/magnitude), Polynomial Calculator (evaluate/add/multiply)
+- **Utility** — Percentage (of / is-what-percent / % change), Tip (with split-by-people), Split Bill, Ratio (simplify or solve a proportion), Average, Random Number Generator, Unit Converter (length/weight/volume/area/speed/time/data/temperature), Base Converter, Roman Numeral Converter, Timezone Converter
 
 **Settings** — theme (Light / Dark / AMOLED / High Contrast), 8 accent colors, font size, button size, animation speed, decimal precision, angle mode, history limit, layout density, sound effects (synthesized, no audio assets), haptic feedback (Vibration API), reduce‑motion override, a default-calculator picker (or "remember last used"), reset to defaults.
 
 **Design** — glassmorphism surfaces, soft shadows, gradient backgrounds, animated tab indicator, button ripple/press feedback, shake‑on‑error, crossfading result transitions — all via Framer Motion and CSS custom properties, fully responsive from 320px phones to ultra‑wide desktops with zero horizontal overflow.
 
-**Platform** — installable PWA with offline support (including deep-linked routes), WCAG AA–verified accessibility, keyboard‑first interaction, and a component architecture designed for the [remaining calculator modes](#roadmap) already stubbed in the mode registry.
+**Platform** — installable PWA with offline support (including deep-linked routes), WCAG AA–verified accessibility, keyboard‑first interaction, and a component architecture that grew from 11 to 35 live calculator modes without a rewrite (see [Roadmap](#roadmap)).
 
 ## Tech stack
 
@@ -92,7 +99,7 @@ src/
 │   └── common/         # IconButton, Modal, FormField, ResultCard, SegmentedControl,
 │                       # PageHeader, FormPage — generic, reused across every calculator
 ├── pages/              # AppShell (chrome + all sidebars, via <Outlet/>), CalculatorPage
-│                       # (Standard/Scientific), and one page per utility calculator
+│                       # (Standard/Scientific), and one page per calculator (32 utility pages)
 ├── context/            # React Context objects + hooks (*.ts) and Providers (*.tsx)
 ├── store/              # Pure reducers consumed by the context Providers
 ├── parser/             # sanitizeExpression + mathEngine (see Security below)
@@ -118,7 +125,7 @@ flowchart TB
   CP --> Shell["AppShell (Navbar, Footer, Sidebars)"]
   Shell --> Outlet{{"<Outlet/>"}}
   Outlet --> CalcPage["CalculatorPage (/ and /scientific)"]
-  Outlet --> UtilPages["9 utility calculator pages (/bmi, /emi, ...)"]
+  Outlet --> UtilPages["32 calculator pages (/bmi, /emi, /matrix, /programmer, ...)"]
   CalcPage --> Display
   CalcPage --> Keyboard
   Shell --> HistorySidebar["Sidebar: HistoryPanel"]
@@ -198,13 +205,13 @@ Installable (valid manifest + service worker + icons), works fully offline (Work
 
 ## Testing
 
-170 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility (~90% statement coverage). Run `npm run test:coverage` for the full breakdown.
+315 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility (~93% statement coverage). Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
-- **Calculation tests** — every utility calculator's pure function (percentage, discount, GST, tip, BMI, age, simple/compound interest, EMI), including a hand-checked known-value case for EMI.
+- **Calculation tests** — every calculator's pure function (all 32, from Percentage through Matrix/Vector/Polynomial and the Programmer bitwise ops), including hand-checked known-value cases (EMI, a 3×3 determinant, a fixed-offset timezone conversion, `MCMXCIV`, etc.).
 - **Reducer unit tests** — calculator/history/memory/settings reducers tested as pure functions.
 - **Component tests** — Button, Display in isolation.
-- **Integration tests** — full user flows through `CalculatorPage` (calculate, error recovery, history reuse/delete/clear, memory MS/M+/M-/MC, every Settings control) and through the router (launcher search/navigation, deep-linking, the default-calculator redirect simulated across a real unmount/remount).
+- **Integration tests** — full user flows through `CalculatorPage` (calculate, error recovery, history reuse/delete/clear, memory MS/M+/M-/MC, every Settings control) and through the router (launcher search/navigation, deep-linking, the default-calculator redirect simulated across a real unmount/remount, and a check that every registered mode renders as a clickable link).
 - **Accessibility tests** — `jest-axe` on every panel/theme/modal state, focus management, keyboard-shortcut/native-control conflicts.
 
 ## Deployment
@@ -232,8 +239,6 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 ## Roadmap
 
-**Live now**: Standard, Scientific, Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI.
+**Live now**: all 35 modes in `src/constants/calculatorModes.ts` are `status: 'available'` — Standard, Scientific, Programmer, and every planned finance/health/math/utility calculator (Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation Solver, Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter, plus the original Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI). The registry's `status` field and the launcher's coming-soon styling remain in place for any future mode — adding one is still just: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`SelectField`/`TextAreaField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and a registry entry.
 
-The architecture is ready for the rest without restructuring: `src/constants/calculatorModes.ts` registers the remaining ~24 planned tools (Programmer, Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation/Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter) with `status: 'coming-soon'` — they already show up, greyed out, in the "Browse calculators" launcher. Adding one is: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and flipping its registry entry to `'available'`.
-
-Also on the roadmap: voice input/speech output, OCR/camera math scanning, natural-language calculation ("what is 15% of 800"), i18n/RTL, export (CSV/JSON/PDF), and a resizable desktop sidebar layout.
+Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, natural-language calculation ("what is 15% of 800"), i18n/RTL, export (CSV/JSON/PDF), and a resizable desktop sidebar layout.
