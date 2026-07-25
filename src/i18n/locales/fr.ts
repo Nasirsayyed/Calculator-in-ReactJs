@@ -72,6 +72,7 @@ const fr: TranslationResource = {
     cancel: 'Annuler',
     closeDialog: 'Fermer {{title}}',
     backToCalculators: 'Retour aux calculatrices',
+    loading: 'Chargement…',
   },
   pages: {
     percentage: {

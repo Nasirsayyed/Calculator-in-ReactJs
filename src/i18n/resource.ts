@@ -68,6 +68,7 @@ export interface TranslationResource {
     cancel: string;
     closeDialog: string;
     backToCalculators: string;
+    loading: string;
   };
   pages: {
     percentage: {

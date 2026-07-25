@@ -76,6 +76,7 @@ const en: TranslationResource = {
     cancel: 'Cancel',
     closeDialog: 'Close {{title}}',
     backToCalculators: 'Back to calculators',
+    loading: 'Loading…',
   },
   pages: {
     percentage: {

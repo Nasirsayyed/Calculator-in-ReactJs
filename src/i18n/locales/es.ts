@@ -72,6 +72,7 @@ const es: TranslationResource = {
     cancel: 'Cancelar',
     closeDialog: 'Cerrar {{title}}',
     backToCalculators: 'Volver a las calculadoras',
+    loading: 'Cargando…',
   },
   pages: {
     percentage: {

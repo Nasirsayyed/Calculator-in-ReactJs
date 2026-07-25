@@ -71,6 +71,7 @@ const ar: TranslationResource = {
     cancel: 'إلغاء',
     closeDialog: 'إغلاق {{title}}',
     backToCalculators: 'العودة إلى الآلات الحاسبة',
+    loading: 'جارٍ التحميل…',
   },
   pages: {
     percentage: {
