@@ -21,6 +21,11 @@ import { RatioPage } from '@pages/RatioPage';
 import { AveragePage } from '@pages/AveragePage';
 import { CurrencyPage } from '@pages/CurrencyPage';
 import { UnitConverterPage } from '@pages/UnitConverterPage';
+import { LcmGcdPage } from '@pages/LcmGcdPage';
+import { StatisticsPage } from '@pages/StatisticsPage';
+import { ProbabilityPage } from '@pages/ProbabilityPage';
+import { QuadraticPage } from '@pages/QuadraticPage';
+import { EquationSolverPage } from '@pages/EquationSolverPage';
 
 function App() {
   return (
@@ -48,6 +53,11 @@ function App() {
           <Route path="/average" element={<AveragePage />} />
           <Route path="/currency" element={<CurrencyPage />} />
           <Route path="/convert" element={<UnitConverterPage />} />
+          <Route path="/lcm-gcd" element={<LcmGcdPage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/probability" element={<ProbabilityPage />} />
+          <Route path="/quadratic" element={<QuadraticPage />} />
+          <Route path="/equation-solver" element={<EquationSolverPage />} />
         </Route>
       </Routes>
     </AppProviders>
