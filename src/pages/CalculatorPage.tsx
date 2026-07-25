@@ -6,6 +6,7 @@ import { Display } from '@components/Display';
 import { Keyboard } from '@components/Keyboard';
 import { AngleModeToggle } from '@components/Scientific';
 import { MemoryToolbar } from '@components/Memory';
+import { NaturalLanguageInput } from '@components/NaturalLanguage';
 import { STANDARD_KEYPAD } from '@constants/standardKeypad';
 import { SCIENTIFIC_KEYPAD } from '@constants/scientificKeypad';
 
@@ -32,6 +33,7 @@ export function CalculatorPage() {
 
   return (
     <>
+      <NaturalLanguageInput />
       <Display
         expression={state.expression}
         preview={state.preview}

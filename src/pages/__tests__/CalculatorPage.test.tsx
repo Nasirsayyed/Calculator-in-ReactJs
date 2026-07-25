@@ -371,3 +371,46 @@ describe('Settings panel', () => {
     expect(reducedMotion).toBeChecked();
   });
 });
+
+describe('Natural-language input', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it('translates and evaluates a plain-English question', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = screen.getByLabelText('Ask a calculation in plain English');
+    await user.type(input, 'what is 15% of 800');
+    await user.keyboard('{Enter}');
+
+    await expectPrimaryToShow('120');
+    expect(input).toHaveValue('');
+  });
+
+  it('does not leak typed digits into the calculator expression', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = screen.getByLabelText('Ask a calculation in plain English');
+    await user.type(input, '1234');
+
+    expect(input).toHaveValue('1234');
+    const nodes = screen.getAllByTestId('calculator-primary');
+    expect(nodes.some((node) => node.textContent === '0')).toBe(true);
+    expect(nodes.some((node) => node.textContent === '1234')).toBe(false);
+  });
+
+  it('shows an inline error and leaves the calculator display untouched when nothing matches', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    const input = screen.getByLabelText('Ask a calculation in plain English');
+    await user.type(input, 'banana');
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Couldn’t understand that');
+    expect(input).toHaveValue('banana');
+  });
+});

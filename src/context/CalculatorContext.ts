@@ -10,6 +10,7 @@ export interface CalculatorContextValue {
   toggleSign: () => void;
   setMode: (mode: CalculatorMode) => void;
   setExpression: (expression: string) => void;
+  evaluateText: (expression: string) => void;
 }
 
 export const CalculatorContext = createContext<CalculatorContextValue | null>(null);

@@ -16,6 +16,20 @@ function isInteractiveElementFocused(): boolean {
   return role === 'tab' || role === 'radio' || role === 'button';
 }
 
+const NON_TEXT_INPUT_TYPES = new Set(['button', 'submit', 'checkbox', 'radio', 'range', 'color']);
+
+/** True when the focused element is a genuine text-entry control (a text
+ * input or textarea elsewhere on the page, e.g. the natural-language input)
+ * - digits/operators typed there must reach it instead of being hijacked
+ * into the calculator's own expression. */
+function isTextEntryFocused(): boolean {
+  const el = document.activeElement;
+  if (!el) return false;
+  if (el.tagName === 'TEXTAREA') return true;
+  if (el.tagName === 'INPUT') return !NON_TEXT_INPUT_TYPES.has((el as HTMLInputElement).type);
+  return false;
+}
+
 /** Wires the physical keyboard to the active calculator's input actions. */
 export function useCalculatorKeyboardShortcuts(): void {
   const { input, clear, deleteLast, equals } = useCalculator();
@@ -28,6 +42,10 @@ export function useCalculatorKeyboardShortcuts(): void {
       if (isAnyDialogOpen()) return;
       // Let a focused button/tab/input/link handle its own Enter or Space.
       if (ACTIVATION_KEYS.has(event.key) && isInteractiveElementFocused()) return;
+      // Let a focused text input/textarea elsewhere on the page (e.g. the
+      // natural-language input) receive its own digits/operators instead of
+      // having them hijacked into the calculator's expression.
+      if (DIRECT_INPUT_KEYS.has(event.key) && isTextEntryFocused()) return;
 
       if (DIRECT_INPUT_KEYS.has(event.key)) {
         event.preventDefault();

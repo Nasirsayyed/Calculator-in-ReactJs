@@ -108,4 +108,37 @@ describe('calculatorReducer', () => {
     // @ts-expect-error - intentionally invalid action for the default branch
     expect(calculatorReducer(state, { type: 'NOT_A_REAL_ACTION' })).toBe(state);
   });
+
+  it('EVALUATE_EXPRESSION evaluates an explicit expression in one atomic step', () => {
+    const state = createInitialCalculatorState();
+    const next = calculatorReducer(state, {
+      type: 'EVALUATE_EXPRESSION',
+      expression: '(15/100)*800',
+      precision,
+    });
+
+    expect(next.result).toBe('120');
+    expect(next.expression).toBe('(15/100)*800');
+    expect(next.justEvaluated).toBe(true);
+    expect(next.error).toBeNull();
+  });
+
+  it('EVALUATE_EXPRESSION surfaces an error without touching justEvaluated', () => {
+    const state = createInitialCalculatorState();
+    const next = calculatorReducer(state, {
+      type: 'EVALUATE_EXPRESSION',
+      expression: '1/0',
+      precision,
+    });
+
+    expect(next.justEvaluated).toBe(false);
+    expect(next.error).toBe('Cannot divide by zero');
+  });
+
+  it('EVALUATE_EXPRESSION is a no-op for an empty expression', () => {
+    const state = createInitialCalculatorState();
+    expect(
+      calculatorReducer(state, { type: 'EVALUATE_EXPRESSION', expression: '', precision }),
+    ).toBe(state);
+  });
 });

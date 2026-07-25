@@ -1,5 +1,6 @@
 import { create, all } from 'mathjs/number';
 import { sanitizeExpression } from './sanitizeExpression';
+import { looksLikeNaturalLanguage, parseNaturalLanguage } from './naturalLanguage';
 import { formatNumber } from '@utils/formatNumber';
 import type { AngleMode, CalculationResult } from '@app-types/calculator';
 import type { FactoryFunctionMap } from 'mathjs';
@@ -131,4 +132,34 @@ export function evaluateExpression(
 export function evaluateLivePreview(rawExpression: string, options: EvaluateOptions = {}): string {
   const result = evaluateExpression(rawExpression, options);
   return result.ok ? result.value : '';
+}
+
+export interface SmartEvaluateResult extends CalculationResult {
+  /** The expression actually evaluated - identical to the input unless a
+   * natural-language phrase was translated into calculator syntax first. */
+  resolvedExpression: string;
+}
+
+/**
+ * Evaluates ordinary calculator syntax first (`2+2`, `sin(30)`, ...); if that
+ * fails and the input looks like an English phrase (`what is 15% of 800`),
+ * retries after running it through {@link parseNaturalLanguage}. Goes through
+ * the exact same sanitize-then-evaluate pipeline either way - the
+ * natural-language step only ever produces calculator-syntax text, it never
+ * bypasses `sanitizeExpression`.
+ */
+export function evaluateSmartExpression(
+  rawInput: string,
+  options: EvaluateOptions = {},
+): SmartEvaluateResult {
+  const direct = evaluateExpression(rawInput, options);
+  if (direct.ok || !looksLikeNaturalLanguage(rawInput)) {
+    return { ...direct, resolvedExpression: rawInput };
+  }
+
+  const translated = parseNaturalLanguage(rawInput);
+  const retried = evaluateExpression(translated, options);
+  return retried.ok
+    ? { ...retried, resolvedExpression: translated }
+    : { ...direct, resolvedExpression: rawInput };
 }

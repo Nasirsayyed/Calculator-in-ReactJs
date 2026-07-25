@@ -22,10 +22,24 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
     (expression: string) => dispatch({ type: 'SET_EXPRESSION', expression, precision }),
     [precision],
   );
+  const evaluateText = useCallback(
+    (expression: string) => dispatch({ type: 'EVALUATE_EXPRESSION', expression, precision }),
+    [precision],
+  );
 
   const value = useMemo<CalculatorContextValue>(
-    () => ({ state, input, clear, deleteLast, equals, toggleSign, setMode, setExpression }),
-    [state, input, clear, deleteLast, equals, toggleSign, setMode, setExpression],
+    () => ({
+      state,
+      input,
+      clear,
+      deleteLast,
+      equals,
+      toggleSign,
+      setMode,
+      setExpression,
+      evaluateText,
+    }),
+    [state, input, clear, deleteLast, equals, toggleSign, setMode, setExpression, evaluateText],
   );
 
   return <CalculatorContext.Provider value={value}>{children}</CalculatorContext.Provider>;

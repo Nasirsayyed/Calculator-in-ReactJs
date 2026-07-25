@@ -23,7 +23,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 
 ## Features
 
-**Standard mode** — addition, subtraction, multiplication, division, decimal input, percentage, sign toggle, clear/delete, live result preview, keyboard input, animated results.
+**Standard mode** — addition, subtraction, multiplication, division, decimal input, percentage, sign toggle, clear/delete, live result preview, keyboard input, animated results, and a natural-language input ("what is 15% of 800", "5 plus 3", "square root of 16") that translates plain English into a calculator expression before evaluating it through the same secure pipeline.
 
 **Scientific mode** — sin/cos/tan and their inverses, sinh/cosh/tanh, log (base‑10) and ln, √ and ∛, `x^y`/`x²`/`x³`, `x!`, `1/x`, `|x|`, `mod`, floor/ceil/round/sign, π/e, degree/radian toggle, auto‑completion of missing closing parentheses.
 
@@ -196,6 +196,7 @@ Verified with `jest-axe` (in the test suite, every panel/theme/modal combination
 - 6 of 8 accent-color presets failed WCAG AA contrast against the white text used on filled buttons/tabs. Rather than force one text color across every hue (which would force yellow/teal into muddy browns), each preset now carries its own pre-verified contrast color.
 - The "danger" and "success" text colors in the Light theme were both under 4.5:1 against white.
 - The shared `SegmentedControl` (used by the theme picker, angle-mode toggle, and several utility calculators) didn't wrap, so a 3-4-option control silently overflowed the page horizontally on narrow phones — found via an automated 320px-width overflow check, not a visual scan.
+- The global physical-keyboard shortcut only deferred to a focused button/tab/link for Enter/Space, not digit/operator keys for a focused text input elsewhere on the page — so typing into the new natural-language input also leaked those same keystrokes into the calculator's own expression. Fixed by extending the focus check to cover digit/operator keys whenever a genuine text input or textarea has focus.
 
 Also implemented: full keyboard navigation, a real Tab focus trap inside open dialogs (aware of nesting — a confirmation modal opened over a panel only lets the modal close on Escape), focus restored to the triggering element on close, `aria-live` regions on the display, visible focus rings, and a High Contrast theme whose accent is guaranteed rather than user-overridable. `prefers-reduced-motion` is respected two ways: CSS durations scale via a `--motion-scale` custom property, and Framer Motion's `<MotionConfig reducedMotion>` is driven by the same effective value (OS preference OR explicit Settings toggle).
 
@@ -205,7 +206,7 @@ Installable (valid manifest + service worker + icons), works fully offline (Work
 
 ## Testing
 
-315 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility (~93% statement coverage). Run `npm run test:coverage` for the full breakdown.
+336 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
 - **Calculation tests** — every calculator's pure function (all 32, from Percentage through Matrix/Vector/Polynomial and the Programmer bitwise ops), including hand-checked known-value cases (EMI, a 3×3 determinant, a fixed-offset timezone conversion, `MCMXCIV`, etc.).
@@ -241,4 +242,4 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 **Live now**: all 35 modes in `src/constants/calculatorModes.ts` are `status: 'available'` — Standard, Scientific, Programmer, and every planned finance/health/math/utility calculator (Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation Solver, Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter, plus the original Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI). The registry's `status` field and the launcher's coming-soon styling remain in place for any future mode — adding one is still just: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`SelectField`/`TextAreaField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and a registry entry.
 
-Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, natural-language calculation ("what is 15% of 800"), i18n/RTL, export (CSV/JSON/PDF), and a resizable desktop sidebar layout.
+Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, i18n/RTL, export (CSV/JSON/PDF), and a resizable desktop sidebar layout.

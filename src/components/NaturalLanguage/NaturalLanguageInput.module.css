@@ -1,0 +1,36 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--space-unit) * 1);
+  padding: calc(var(--space-unit) * 1) calc(var(--space-unit) * 1.5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(var(--surface-blur));
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.error {
+  flex-basis: 100%;
+  color: var(--danger);
+  font-size: 0.8rem;
+}

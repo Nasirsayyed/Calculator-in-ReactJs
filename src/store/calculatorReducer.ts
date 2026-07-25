@@ -30,11 +30,43 @@ export type CalculatorAction =
   | { type: 'EQUALS'; precision: number }
   | { type: 'SET_MODE'; mode: CalculatorMode }
   | { type: 'SET_EXPRESSION'; expression: string; precision: number }
+  | { type: 'EVALUATE_EXPRESSION'; expression: string; precision: number }
   | { type: 'TOGGLE_SIGN'; precision: number };
 
 function withPreview(expression: string, precision: number): { preview: string } {
   return {
     preview: expression ? evaluateLivePreview(autoCloseParens(expression), { precision }) : '',
+  };
+}
+
+/** Shared by EQUALS (evaluates state.expression) and EVALUATE_EXPRESSION
+ * (evaluates an explicitly-supplied expression, e.g. from natural-language
+ * input) so both produce identical result/error state shapes. */
+function evaluateAndUpdate(
+  state: CalculatorState,
+  expression: string,
+  precision: number,
+): CalculatorState {
+  const completedExpression = autoCloseParens(expression);
+  const outcome = evaluateExpression(completedExpression, { precision });
+
+  if (!outcome.ok) {
+    return {
+      ...state,
+      expression,
+      error: outcome.error ?? 'Invalid expression',
+      errorNonce: state.errorNonce + 1,
+      justEvaluated: false,
+    };
+  }
+
+  return {
+    ...state,
+    expression: completedExpression,
+    result: outcome.value,
+    preview: '',
+    error: null,
+    justEvaluated: true,
   };
 }
 
@@ -84,25 +116,12 @@ export function calculatorReducer(
 
     case 'EQUALS': {
       if (!state.expression) return state;
-      const completedExpression = autoCloseParens(state.expression);
-      const outcome = evaluateExpression(completedExpression, { precision: action.precision });
+      return evaluateAndUpdate(state, state.expression, action.precision);
+    }
 
-      if (!outcome.ok) {
-        return {
-          ...state,
-          error: outcome.error ?? 'Invalid expression',
-          errorNonce: state.errorNonce + 1,
-        };
-      }
-
-      return {
-        ...state,
-        expression: completedExpression,
-        result: outcome.value,
-        preview: '',
-        error: null,
-        justEvaluated: true,
-      };
+    case 'EVALUATE_EXPRESSION': {
+      if (!action.expression) return state;
+      return evaluateAndUpdate(state, action.expression, action.precision);
     }
 
     case 'SET_MODE':
