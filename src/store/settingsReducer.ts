@@ -17,6 +17,7 @@ export function createDefaultSettings(): Settings {
     layoutDensity: 'comfortable',
     reducedMotion: false,
     defaultMode: 'standard',
+    language: 'en',
   };
 }
 
@@ -34,6 +35,7 @@ export type SettingsAction =
   | { type: 'SET_LAYOUT_DENSITY'; density: LayoutDensity }
   | { type: 'SET_REDUCED_MOTION'; enabled: boolean }
   | { type: 'SET_DEFAULT_MODE'; modeId: string }
+  | { type: 'SET_LANGUAGE'; language: string }
   | { type: 'RESET_SETTINGS' };
 
 export function settingsReducer(state: Settings, action: SettingsAction): Settings {
@@ -64,6 +66,8 @@ export function settingsReducer(state: Settings, action: SettingsAction): Settin
       return { ...state, reducedMotion: action.enabled };
     case 'SET_DEFAULT_MODE':
       return { ...state, defaultMode: action.modeId };
+    case 'SET_LANGUAGE':
+      return { ...state, language: action.language };
     case 'RESET_SETTINGS':
       return createDefaultSettings();
     default:

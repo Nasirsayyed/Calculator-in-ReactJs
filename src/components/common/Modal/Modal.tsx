@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useDialogA11y } from '../../../hooks/useDialogA11y';
 import styles from './Modal.module.css';
 
@@ -14,7 +15,14 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
   useDialogA11y(open, onClose, cardRef);
 
-  return (
+  // Portaled to <body> - this can be opened from inside a Sidebar, which
+  // sits inside `.content` (a `backdrop-filter` ancestor). `backdrop-filter`
+  // establishes a new containing block for `position: fixed` descendants
+  // per spec, so without the portal this `fixed` backdrop/card would be
+  // constrained to that small centered box instead of covering the
+  // viewport - invisible at phone widths where the box is nearly
+  // viewport-wide, but badly broken on any wider screen.
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -43,6 +51,7 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

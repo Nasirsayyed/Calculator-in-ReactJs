@@ -40,7 +40,9 @@ This repository was rebuilt from a single-file Create React App calculator into 
 - **Math** — LCM/GCD, Statistics (mean/range/variance/std-dev), Probability (nPr/nCr/event probability), Quadratic Solver (real or complex roots), Equation Solver (2×2 linear systems via Cramer's rule), Matrix Calculator (2×2, add/subtract/multiply/transpose/determinant), Vector Calculator (2D/3D, dot/cross product/magnitude), Polynomial Calculator (evaluate/add/multiply)
 - **Utility** — Percentage (of / is-what-percent / % change), Tip (with split-by-people), Split Bill, Ratio (simplify or solve a proportion), Average, Random Number Generator, Unit Converter (length/weight/volume/area/speed/time/data/temperature), Base Converter, Roman Numeral Converter, Timezone Converter
 
-**Settings** — theme (Light / Dark / AMOLED / High Contrast), 8 accent colors, font size, button size, animation speed, decimal precision, angle mode, history limit, layout density, sound effects (synthesized, no audio assets), haptic feedback (Vibration API), reduce‑motion override, a default-calculator picker (or "remember last used"), reset to defaults.
+**Settings** — theme (Light / Dark / AMOLED / High Contrast), 8 accent colors, font size, button size, animation speed, decimal precision, angle mode, history limit, layout density, sound effects (synthesized, no audio assets), haptic feedback (Vibration API), reduce‑motion override, a default-calculator picker (or "remember last used"), a language picker, reset to defaults.
+
+**Internationalization** — English, Spanish, French, and Arabic (RTL), switchable from Settings. Covers the app chrome: Navbar, Footer, Sidebars, Settings panel, and the "Browse calculators" launcher (search, categories, coming-soon state). Arabic flips `<html dir>` to `rtl`, and the existing flexbox/grid layout mirrors correctly with no additional CSS overrides needed. Individual calculator pages' field labels are still English-only - see [Roadmap](#roadmap).
 
 **Design** — glassmorphism surfaces, soft shadows, gradient backgrounds, animated tab indicator, button ripple/press feedback, shake‑on‑error, crossfading result transitions — all via Framer Motion and CSS custom properties, fully responsive from 320px phones to ultra‑wide desktops with zero horizontal overflow.
 
@@ -61,6 +63,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 | Persistence        | `localStorage` (via a small guarded service) |
 | PWA                | vite-plugin-pwa (Workbox)                    |
 | Export             | jsPDF (dynamically imported, PDF only)       |
+| i18n               | i18next + react-i18next                      |
 | Testing            | Vitest, React Testing Library, jest-axe      |
 | Linting/formatting | ESLint (flat config) + Prettier              |
 | Git hooks          | Husky + lint-staged + commitlint             |
@@ -198,6 +201,7 @@ Verified with `jest-axe` (in the test suite, every panel/theme/modal combination
 - The "danger" and "success" text colors in the Light theme were both under 4.5:1 against white.
 - The shared `SegmentedControl` (used by the theme picker, angle-mode toggle, and several utility calculators) didn't wrap, so a 3-4-option control silently overflowed the page horizontally on narrow phones — found via an automated 320px-width overflow check, not a visual scan.
 - The global physical-keyboard shortcut only deferred to a focused button/tab/link for Enter/Space, not digit/operator keys for a focused text input elsewhere on the page — so typing into the new natural-language input also leaked those same keystrokes into the calculator's own expression. Fixed by extending the focus check to cover digit/operator keys whenever a genuine text input or textarea has focus.
+- `Sidebar` and `Modal` are `position: fixed`, but were rendered as descendants of `.content`, which has `backdrop-filter: blur(...)` — a property that (per spec, alongside `transform`/`filter`/`will-change`) establishes a new containing block for fixed-position descendants. The result: every "full-screen" drawer/dialog was actually constrained to that small centered content box instead of the viewport - invisible on phone widths where the box is nearly viewport-wide, but badly broken on any wider screen (confirmed at 1400px: the Settings drawer opened mid-page instead of sliding in from the real screen edge). Found while testing the new Arabic/RTL layout at a desktop viewport. Fixed by rendering both through a React portal to `document.body`, which also required repointing a few `jest-axe` scans from RTL's `container` to `document.body` so the portaled dialogs stay covered by the accessibility test suite.
 
 Also implemented: full keyboard navigation, a real Tab focus trap inside open dialogs (aware of nesting — a confirmation modal opened over a panel only lets the modal close on Escape), focus restored to the triggering element on close, `aria-live` regions on the display, visible focus rings, and a High Contrast theme whose accent is guaranteed rather than user-overridable. `prefers-reduced-motion` is respected two ways: CSS durations scale via a `--motion-scale` custom property, and Framer Motion's `<MotionConfig reducedMotion>` is driven by the same effective value (OS preference OR explicit Settings toggle).
 
@@ -209,7 +213,7 @@ Installable (valid manifest + service worker + icons), works fully offline (Work
 
 ## Testing
 
-344 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
+347 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
 - **Calculation tests** — every calculator's pure function (all 32, from Percentage through Matrix/Vector/Polynomial and the Programmer bitwise ops), including hand-checked known-value cases (EMI, a 3×3 determinant, a fixed-offset timezone conversion, `MCMXCIV`, etc.).
@@ -245,4 +249,4 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 **Live now**: all 35 modes in `src/constants/calculatorModes.ts` are `status: 'available'` — Standard, Scientific, Programmer, and every planned finance/health/math/utility calculator (Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation Solver, Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter, plus the original Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI). The registry's `status` field and the launcher's coming-soon styling remain in place for any future mode — adding one is still just: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`SelectField`/`TextAreaField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and a registry entry.
 
-Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, i18n/RTL, and a resizable desktop sidebar layout.
+Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, and a resizable desktop sidebar layout. i18n covers the app chrome (see [Features](#features)); translating each of the 32 calculator pages' own field labels is a natural follow-on but wasn't done here.

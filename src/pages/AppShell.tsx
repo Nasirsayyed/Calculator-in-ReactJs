@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useCalculator } from '@context/CalculatorContext';
 import { useSettings } from '@context/SettingsContext';
@@ -23,6 +24,7 @@ function resolveDefaultPath(defaultMode: string): string {
 }
 
 export function AppShell() {
+  const { t } = useTranslation();
   const { setExpression } = useCalculator();
   const { settings } = useSettings();
   const navigate = useNavigate();
@@ -68,16 +70,28 @@ export function AppShell() {
     >
       <Outlet />
 
-      <Sidebar open={historyOpen} title="History" onClose={() => setHistoryOpen(false)}>
+      <Sidebar
+        open={historyOpen}
+        title={t('sidebar.history')}
+        onClose={() => setHistoryOpen(false)}
+      >
         <HistoryPanel onReuse={handleReuse} />
       </Sidebar>
-      <Sidebar open={memoryOpen} title="Memory" onClose={() => setMemoryOpen(false)}>
+      <Sidebar open={memoryOpen} title={t('sidebar.memory')} onClose={() => setMemoryOpen(false)}>
         <MemoryPanel />
       </Sidebar>
-      <Sidebar open={settingsOpen} title="Settings" onClose={() => setSettingsOpen(false)}>
+      <Sidebar
+        open={settingsOpen}
+        title={t('sidebar.settings')}
+        onClose={() => setSettingsOpen(false)}
+      >
         <SettingsPanel />
       </Sidebar>
-      <Sidebar open={modesOpen} title="Calculators" onClose={() => setModesOpen(false)}>
+      <Sidebar
+        open={modesOpen}
+        title={t('sidebar.calculators')}
+        onClose={() => setModesOpen(false)}
+      >
         <ModesLauncher onNavigate={() => setModesOpen(false)} />
       </Sidebar>
     </Layout>

@@ -20,4 +20,6 @@ export interface Settings {
   /** A calculator mode id (see CALCULATOR_MODES), or 'last-used' to reopen
    * whichever calculator was open when the app was last closed. */
   defaultMode: string;
+  /** A language id from SUPPORTED_LANGUAGES (see i18n/languages.ts). */
+  language: string;
 }

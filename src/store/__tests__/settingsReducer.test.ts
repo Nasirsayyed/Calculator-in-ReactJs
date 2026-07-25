@@ -53,6 +53,13 @@ describe('settingsReducer', () => {
     expect(state.defaultMode).toBe('bmi');
   });
 
+  it('updates the language', () => {
+    let state = createDefaultSettings();
+    expect(state.language).toBe('en');
+    state = settingsReducer(state, { type: 'SET_LANGUAGE', language: 'fr' });
+    expect(state.language).toBe('fr');
+  });
+
   it('resets to defaults, discarding prior customization', () => {
     let state = createDefaultSettings();
     state = settingsReducer(state, { type: 'SET_THEME', theme: 'amoled' });

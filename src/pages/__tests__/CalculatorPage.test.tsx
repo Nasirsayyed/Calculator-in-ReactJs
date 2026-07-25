@@ -433,6 +433,51 @@ describe('Settings panel', () => {
     expect(haptics).not.toBeChecked();
     expect(reducedMotion).toBeChecked();
   });
+
+  it('switches the UI language and keeps ltr direction for French', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Open settings' }));
+    const dialog = screen.getByRole('dialog', { name: 'Settings' });
+    await user.selectOptions(within(dialog).getByLabelText('Language'), 'fr');
+
+    expect(await screen.findByRole('tab', { name: 'Scientifique' })).toBeInTheDocument();
+    expect(screen.getByText('Plateforme de Calculatrice')).toBeInTheDocument();
+    expect(document.documentElement).toHaveAttribute('dir', 'ltr');
+    expect(document.documentElement).toHaveAttribute('lang', 'fr');
+
+    // Switch back to English so later tests in this file (which query by the
+    // original English strings) aren't affected by i18next's shared global
+    // instance persisting state across tests in this file.
+    await user.selectOptions(screen.getByLabelText('Langue'), 'en');
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: 'Scientific' })).toBeInTheDocument();
+    });
+  });
+
+  it('switches to Arabic and flips the document to RTL', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Open settings' }));
+    const dialog = screen.getByRole('dialog', { name: 'Settings' });
+    await user.selectOptions(within(dialog).getByLabelText('Language'), 'ar');
+
+    await waitFor(() => {
+      expect(document.documentElement).toHaveAttribute('dir', 'rtl');
+      expect(document.documentElement).toHaveAttribute('lang', 'ar');
+    });
+    expect(screen.getByText('الآلة الحاسبة')).toBeInTheDocument();
+
+    // Switch back to English so later tests in this file (which query by the
+    // original English strings) aren't affected by i18next's shared global
+    // instance persisting state across tests in this file.
+    await user.selectOptions(screen.getByLabelText('اللغة'), 'en');
+    await waitFor(() => {
+      expect(document.documentElement).toHaveAttribute('dir', 'ltr');
+    });
+  });
 });
 
 describe('Natural-language input', () => {

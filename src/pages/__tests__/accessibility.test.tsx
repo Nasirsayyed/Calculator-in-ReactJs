@@ -51,33 +51,37 @@ describe('accessibility', () => {
 
   it('has no axe violations with the History panel open', async () => {
     const user = userEvent.setup();
-    const { container } = renderPage();
+    renderPage();
     await user.click(screen.getByRole('button', { name: 'Open history' }));
-    expect(await axe(container)).toHaveNoViolations();
+    // Sidebar/Modal are portaled to <body> (see Sidebar.tsx/Modal.tsx) so
+    // they escape `.content`'s backdrop-filter containing block - scan the
+    // whole document, not just RTL's `container`, or the portaled dialog
+    // would silently go unchecked.
+    expect(await axe(document.body)).toHaveNoViolations();
   });
 
   it('has no axe violations with the Memory panel open', async () => {
     const user = userEvent.setup();
-    const { container } = renderPage();
+    renderPage();
     await user.click(screen.getByRole('button', { name: 'Open memory' }));
-    expect(await axe(container)).toHaveNoViolations();
+    expect(await axe(document.body)).toHaveNoViolations();
   });
 
   it('has no axe violations with the Settings panel open', async () => {
     const user = userEvent.setup();
-    const { container } = renderPage();
+    renderPage();
     await user.click(screen.getByRole('button', { name: 'Open settings' }));
-    expect(await axe(container)).toHaveNoViolations();
+    expect(await axe(document.body)).toHaveNoViolations();
   });
 
   it('has no axe violations with a confirmation modal open', async () => {
     const user = userEvent.setup();
-    const { container } = renderPage();
+    renderPage();
     await user.click(screen.getByRole('button', { name: '1' }));
     await user.click(screen.getByRole('button', { name: 'Equals' }));
     await user.click(screen.getByRole('button', { name: 'Open history' }));
     await user.click(screen.getByRole('button', { name: 'Clear all' }));
-    expect(await axe(container)).toHaveNoViolations();
+    expect(await axe(document.body)).toHaveNoViolations();
   });
 
   it('moves focus into the History dialog on open and restores it on close', async () => {

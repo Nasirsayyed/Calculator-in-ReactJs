@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { CALCULATOR_MODES } from '@constants/calculatorModes';
 import type { CalculatorModeCategory } from '@constants/calculatorModes';
@@ -18,6 +19,7 @@ export interface ModesLauncherProps {
 }
 
 export function ModesLauncher({ onNavigate }: ModesLauncherProps) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
 
   const grouped = useMemo(() => {
@@ -37,18 +39,18 @@ export function ModesLauncher({ onNavigate }: ModesLauncherProps) {
       <input
         type="text"
         className={styles.search}
-        placeholder="Search calculators"
-        aria-label="Search calculators"
+        placeholder={t('modes.searchPlaceholder')}
+        aria-label={t('modes.searchPlaceholder')}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
       />
 
       {grouped.length === 0 ? (
-        <p className={styles.empty}>No calculators match &quot;{query}&quot;.</p>
+        <p className={styles.empty}>{t('modes.noMatches', { query })}</p>
       ) : (
         grouped.map((group) => (
           <div key={group.category} className={styles.category}>
-            <span className={styles.categoryTitle}>{group.category}</span>
+            <span className={styles.categoryTitle}>{t(`modes.category.${group.category}`)}</span>
             <div className={styles.grid}>
               {group.modes.map((mode) =>
                 mode.status === 'available' ? (
@@ -60,7 +62,7 @@ export function ModesLauncher({ onNavigate }: ModesLauncherProps) {
                     key={mode.id}
                     className={cx(styles.card, styles.cardDisabled)}
                     aria-disabled="true"
-                    title="Coming soon"
+                    title={t('modes.comingSoon')}
                   >
                     {mode.label}
                   </span>

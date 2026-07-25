@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { FiX } from 'react-icons/fi';
 import { IconButton } from '@components/common/IconButton';
 import { useDialogA11y } from '../../hooks/useDialogA11y';
@@ -13,10 +15,19 @@ export interface SidebarProps {
 }
 
 export function Sidebar({ open, title, onClose, children }: SidebarProps) {
+  const { t } = useTranslation();
   const panelRef = useRef<HTMLDivElement | null>(null);
   useDialogA11y(open, onClose, panelRef);
 
-  return (
+  // Portaled to <body> - AppShell renders Sidebars as children of Layout,
+  // which lands them inside `.content` (a `backdrop-filter` ancestor).
+  // `backdrop-filter` establishes a new containing block for `position:
+  // fixed` descendants per spec, so without the portal this "fixed,
+  // viewport-edge-anchored drawer" would actually be constrained to that
+  // small centered content box - invisible at phone widths where the box is
+  // nearly viewport-wide, but badly broken on any wider screen (the drawer
+  // opens mid-page instead of sliding in from the real screen edge).
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -44,7 +55,7 @@ export function Sidebar({ open, title, onClose, children }: SidebarProps) {
           >
             <div className={styles.header}>
               <span className={styles.title}>{title}</span>
-              <IconButton ariaLabel={`Close ${title}`} onClick={onClose}>
+              <IconButton ariaLabel={t('common.closeDialog', { title })} onClick={onClose}>
                 <FiX />
               </IconButton>
             </div>
@@ -52,6 +63,7 @@ export function Sidebar({ open, title, onClose, children }: SidebarProps) {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

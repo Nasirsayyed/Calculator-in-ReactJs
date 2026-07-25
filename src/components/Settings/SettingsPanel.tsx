@@ -1,10 +1,12 @@
 import { useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiRotateCcw } from 'react-icons/fi';
 import { useSettings } from '@context/SettingsContext';
 import { Modal } from '@components/common/Modal';
 import { cx } from '@utils/classNames';
 import { ACCENT_PRESETS, THEMES } from '@constants/themes';
 import { CALCULATOR_MODES } from '@constants/calculatorModes';
+import { SUPPORTED_LANGUAGES } from '@/i18n/languages';
 import type { LayoutDensity, ThemeName } from '@app-types/settings';
 import styles from './Settings.module.css';
 
@@ -19,19 +21,17 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-const DENSITY_OPTIONS: { id: LayoutDensity; label: string }[] = [
-  { id: 'comfortable', label: 'Comfortable' },
-  { id: 'compact', label: 'Compact' },
-];
+const DENSITY_OPTIONS: LayoutDensity[] = ['comfortable', 'compact'];
 
 export function SettingsPanel() {
+  const { t } = useTranslation();
   const { settings, dispatch } = useSettings();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
     <div className={styles.panel}>
-      <Section title="Theme">
-        <div className={styles.segmented} role="radiogroup" aria-label="Theme">
+      <Section title={t('settings.theme')}>
+        <div className={styles.segmented} role="radiogroup" aria-label={t('settings.theme')}>
           {THEMES.map((theme) => (
             <button
               key={theme.id}
@@ -44,29 +44,29 @@ export function SettingsPanel() {
               )}
               onClick={() => dispatch({ type: 'SET_THEME', theme: theme.id as ThemeName })}
             >
-              {theme.label}
+              {t(`settings.themeOptions.${theme.id}`)}
             </button>
           ))}
         </div>
       </Section>
 
-      <Section title="Accent color">
+      <Section title={t('settings.accentColor')}>
         {settings.theme === 'high-contrast' ? (
           <p
             className={styles.sectionTitle}
             style={{ textTransform: 'none', letterSpacing: 'normal' }}
           >
-            High Contrast uses a fixed, AA-safe accent - switch themes to customize this.
+            {t('settings.highContrastNote')}
           </p>
         ) : (
-          <div className={styles.swatches} role="radiogroup" aria-label="Accent color">
+          <div className={styles.swatches} role="radiogroup" aria-label={t('settings.accentColor')}>
             {ACCENT_PRESETS.map(({ color }) => (
               <button
                 key={color}
                 type="button"
                 role="radio"
                 aria-checked={settings.accentColor === color}
-                aria-label={`Accent color ${color}`}
+                aria-label={t('settings.accentColorSwatch', { color })}
                 className={cx(styles.swatch, settings.accentColor === color && styles.swatchActive)}
                 style={{ background: color }}
                 onClick={() => dispatch({ type: 'SET_ACCENT_COLOR', color })}
@@ -76,7 +76,7 @@ export function SettingsPanel() {
         )}
       </Section>
 
-      <Section title="Font size">
+      <Section title={t('settings.fontSize')}>
         <div className={styles.sliderRow}>
           <input
             type="range"
@@ -85,7 +85,7 @@ export function SettingsPanel() {
             max={1.3}
             step={0.05}
             value={settings.fontSize}
-            aria-label="Font size"
+            aria-label={t('settings.fontSize')}
             onChange={(event) =>
               dispatch({ type: 'SET_FONT_SIZE', size: Number(event.target.value) })
             }
@@ -94,7 +94,7 @@ export function SettingsPanel() {
         </div>
       </Section>
 
-      <Section title="Button size">
+      <Section title={t('settings.buttonSize')}>
         <div className={styles.sliderRow}>
           <input
             type="range"
@@ -103,7 +103,7 @@ export function SettingsPanel() {
             max={1.3}
             step={0.05}
             value={settings.buttonSize}
-            aria-label="Button size"
+            aria-label={t('settings.buttonSize')}
             onChange={(event) =>
               dispatch({ type: 'SET_BUTTON_SIZE', size: Number(event.target.value) })
             }
@@ -112,7 +112,7 @@ export function SettingsPanel() {
         </div>
       </Section>
 
-      <Section title="Animation speed">
+      <Section title={t('settings.animationSpeed')}>
         <div className={styles.sliderRow}>
           <input
             type="range"
@@ -121,7 +121,7 @@ export function SettingsPanel() {
             max={2}
             step={0.1}
             value={settings.animationSpeed}
-            aria-label="Animation speed"
+            aria-label={t('settings.animationSpeed')}
             onChange={(event) =>
               dispatch({ type: 'SET_ANIMATION_SPEED', speed: Number(event.target.value) })
             }
@@ -130,7 +130,7 @@ export function SettingsPanel() {
         </div>
       </Section>
 
-      <Section title="Decimal precision">
+      <Section title={t('settings.decimalPrecision')}>
         <div className={styles.sliderRow}>
           <input
             type="range"
@@ -139,7 +139,7 @@ export function SettingsPanel() {
             max={15}
             step={1}
             value={settings.decimalPrecision}
-            aria-label="Decimal precision"
+            aria-label={t('settings.decimalPrecision')}
             onChange={(event) =>
               dispatch({ type: 'SET_DECIMAL_PRECISION', precision: Number(event.target.value) })
             }
@@ -148,7 +148,7 @@ export function SettingsPanel() {
         </div>
       </Section>
 
-      <Section title="History limit">
+      <Section title={t('settings.historyLimit')}>
         <input
           type="number"
           className={styles.numberInput}
@@ -156,7 +156,7 @@ export function SettingsPanel() {
           max={2000}
           step={10}
           value={settings.historyLimit}
-          aria-label="History limit"
+          aria-label={t('settings.historyLimit')}
           onChange={(event) =>
             dispatch({
               type: 'SET_HISTORY_LIMIT',
@@ -166,35 +166,39 @@ export function SettingsPanel() {
         />
       </Section>
 
-      <Section title="Layout density">
-        <div className={styles.segmented} role="radiogroup" aria-label="Layout density">
+      <Section title={t('settings.layoutDensity')}>
+        <div
+          className={styles.segmented}
+          role="radiogroup"
+          aria-label={t('settings.layoutDensity')}
+        >
           {DENSITY_OPTIONS.map((option) => (
             <button
-              key={option.id}
+              key={option}
               type="button"
               role="radio"
-              aria-checked={settings.layoutDensity === option.id}
+              aria-checked={settings.layoutDensity === option}
               className={cx(
                 styles.segmentButton,
-                settings.layoutDensity === option.id && styles.segmentActive,
+                settings.layoutDensity === option && styles.segmentActive,
               )}
-              onClick={() => dispatch({ type: 'SET_LAYOUT_DENSITY', density: option.id })}
+              onClick={() => dispatch({ type: 'SET_LAYOUT_DENSITY', density: option })}
             >
-              {option.label}
+              {t(`settings.density.${option}`)}
             </button>
           ))}
         </div>
       </Section>
 
-      <Section title="Default calculator">
+      <Section title={t('settings.defaultCalculator')}>
         <select
           className={styles.numberInput}
           style={{ width: '100%' }}
-          aria-label="Default calculator"
+          aria-label={t('settings.defaultCalculator')}
           value={settings.defaultMode}
           onChange={(event) => dispatch({ type: 'SET_DEFAULT_MODE', modeId: event.target.value })}
         >
-          <option value="last-used">Remember last used</option>
+          <option value="last-used">{t('settings.rememberLastUsed')}</option>
           {AVAILABLE_MODES.map((mode) => (
             <option key={mode.id} value={mode.id}>
               {mode.label}
@@ -203,7 +207,23 @@ export function SettingsPanel() {
         </select>
       </Section>
 
-      <Section title="Preferences">
+      <Section title={t('settings.language')}>
+        <select
+          className={styles.numberInput}
+          style={{ width: '100%' }}
+          aria-label={t('settings.language')}
+          value={settings.language}
+          onChange={(event) => dispatch({ type: 'SET_LANGUAGE', language: event.target.value })}
+        >
+          {SUPPORTED_LANGUAGES.map((language) => (
+            <option key={language.id} value={language.id}>
+              {language.label}
+            </option>
+          ))}
+        </select>
+      </Section>
+
+      <Section title={t('settings.preferences')}>
         <label className={styles.checkboxRow}>
           <input
             type="checkbox"
@@ -212,7 +232,7 @@ export function SettingsPanel() {
               dispatch({ type: 'SET_SOUND_ENABLED', enabled: event.target.checked })
             }
           />
-          Sound effects
+          {t('settings.soundEffects')}
         </label>
         <label className={styles.checkboxRow}>
           <input
@@ -222,7 +242,7 @@ export function SettingsPanel() {
               dispatch({ type: 'SET_HAPTICS_ENABLED', enabled: event.target.checked })
             }
           />
-          Haptic feedback
+          {t('settings.hapticFeedback')}
         </label>
         <label className={styles.checkboxRow}>
           <input
@@ -232,23 +252,27 @@ export function SettingsPanel() {
               dispatch({ type: 'SET_REDUCED_MOTION', enabled: event.target.checked })
             }
           />
-          Reduce motion
+          {t('settings.reduceMotion')}
         </label>
       </Section>
 
       <button type="button" className={styles.resetButton} onClick={() => setConfirmOpen(true)}>
-        <FiRotateCcw /> Reset to defaults
+        <FiRotateCcw /> {t('settings.resetToDefaults')}
       </button>
 
-      <Modal open={confirmOpen} title="Reset settings?" onClose={() => setConfirmOpen(false)}>
-        <p>This restores every setting to its default value. History and memory are kept.</p>
+      <Modal
+        open={confirmOpen}
+        title={t('settings.resetModalTitle')}
+        onClose={() => setConfirmOpen(false)}
+      >
+        <p>{t('settings.resetModalBody')}</p>
         <div className={styles.confirmActions}>
           <button
             type="button"
             className={styles.secondaryButton}
             onClick={() => setConfirmOpen(false)}
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             type="button"
@@ -258,7 +282,7 @@ export function SettingsPanel() {
               setConfirmOpen(false);
             }}
           >
-            Yes, reset
+            {t('settings.confirmReset')}
           </button>
         </div>
       </Modal>

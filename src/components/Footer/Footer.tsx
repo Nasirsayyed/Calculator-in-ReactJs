@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next';
 import styles from './Footer.module.css';
 
 export function Footer() {
-  return <footer className={styles.footer}>Calculator Platform</footer>;
+  const { t } = useTranslation();
+  return <footer className={styles.footer}>{t('footer.text')}</footer>;
 }

@@ -9,7 +9,12 @@ import { SettingsContext, type SettingsContextValue } from './SettingsContext';
 import type { Settings } from '@app-types/settings';
 
 function loadInitialSettings(): Settings {
-  return readFromStorage(STORAGE_KEYS.theme, createDefaultSettings());
+  // Merge over the defaults, not a full replacement - a payload persisted
+  // before a newer setting existed (e.g. `language`, `defaultMode`) would
+  // otherwise leave that field `undefined` for returning users instead of
+  // falling back to its default.
+  const stored = readFromStorage<Partial<Settings>>(STORAGE_KEYS.theme, {});
+  return { ...createDefaultSettings(), ...stored };
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
