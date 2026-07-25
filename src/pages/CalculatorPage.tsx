@@ -1,23 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useCalculator } from '@context/CalculatorContext';
 import { useHistory } from '@context/HistoryContext';
-import { Layout } from '@components/Layout';
 import { Display } from '@components/Display';
 import { Keyboard } from '@components/Keyboard';
-import { Sidebar } from '@components/Sidebar';
 import { AngleModeToggle } from '@components/Scientific';
-import { HistoryPanel } from '@components/History';
-import { MemoryPanel, MemoryToolbar } from '@components/Memory';
-import { SettingsPanel } from '@components/Settings';
+import { MemoryToolbar } from '@components/Memory';
 import { STANDARD_KEYPAD } from '@constants/standardKeypad';
 import { SCIENTIFIC_KEYPAD } from '@constants/scientificKeypad';
 
 export function CalculatorPage() {
-  const { state, setExpression } = useCalculator();
+  const { state, setMode } = useCalculator();
   const { addEntry } = useHistory();
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [memoryOpen, setMemoryOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    setMode(location.pathname === '/scientific' ? 'scientific' : 'standard');
+  }, [location.pathname, setMode]);
 
   useEffect(() => {
     if (state.justEvaluated && !state.error) {
@@ -31,17 +30,8 @@ export function CalculatorPage() {
     [state.mode],
   );
 
-  const handleReuse = (result: string) => {
-    setExpression(result);
-    setHistoryOpen(false);
-  };
-
   return (
-    <Layout
-      onOpenHistory={() => setHistoryOpen(true)}
-      onOpenMemory={() => setMemoryOpen(true)}
-      onOpenSettings={() => setSettingsOpen(true)}
-    >
+    <>
       <Display
         expression={state.expression}
         preview={state.preview}
@@ -53,16 +43,6 @@ export function CalculatorPage() {
       <MemoryToolbar />
       {state.mode === 'scientific' && <AngleModeToggle />}
       <Keyboard layout={layout} />
-
-      <Sidebar open={historyOpen} title="History" onClose={() => setHistoryOpen(false)}>
-        <HistoryPanel onReuse={handleReuse} />
-      </Sidebar>
-      <Sidebar open={memoryOpen} title="Memory" onClose={() => setMemoryOpen(false)}>
-        <MemoryPanel />
-      </Sidebar>
-      <Sidebar open={settingsOpen} title="Settings" onClose={() => setSettingsOpen(false)}>
-        <SettingsPanel />
-      </Sidebar>
-    </Layout>
+    </>
   );
 }

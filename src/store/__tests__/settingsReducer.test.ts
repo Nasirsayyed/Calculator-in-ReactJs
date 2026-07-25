@@ -46,6 +46,13 @@ describe('settingsReducer', () => {
     expect(state.historyLimit).toBe(500);
   });
 
+  it('updates the default calculator mode', () => {
+    let state = createDefaultSettings();
+    expect(state.defaultMode).toBe('standard');
+    state = settingsReducer(state, { type: 'SET_DEFAULT_MODE', modeId: 'bmi' });
+    expect(state.defaultMode).toBe('bmi');
+  });
+
   it('resets to defaults, discarding prior customization', () => {
     let state = createDefaultSettings();
     state = settingsReducer(state, { type: 'SET_THEME', theme: 'amoled' });

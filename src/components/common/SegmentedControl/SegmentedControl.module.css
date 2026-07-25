@@ -1,0 +1,28 @@
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  background: var(--key-bg);
+  border: 1px solid var(--surface-border);
+}
+
+.option {
+  flex: 1 1 auto;
+  min-width: fit-content;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.optionActive {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}

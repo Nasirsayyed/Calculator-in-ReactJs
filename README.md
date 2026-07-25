@@ -1,6 +1,6 @@
 # Calculator Platform
 
-A premium, multi-mode calculator platform built with React 19, TypeScript, and Vite — Standard and Scientific modes today, architected to grow into 30+ calculator tools without a rewrite.
+A premium, multi-mode calculator platform built with React 19, TypeScript, and Vite — 11 calculator tools live today (Standard, Scientific, and 9 finance/health/utility calculators), architected to grow into 30+ without a rewrite.
 
 This repository was rebuilt from a single-file Create React App calculator into a modular, tested, accessible, installable web app. It replaces the original `Function("return " + expression)()` evaluator with a sandboxed math parser, and replaces the flat component tree with a layered architecture (components / hooks / context / store / parser / services).
 
@@ -31,11 +31,13 @@ This repository was rebuilt from a single-file Create React App calculator into 
 
 **Memory** — MC / MR / MS / M+ / M‑, a named multi‑value memory bank with inline rename and delete, persisted to `localStorage`.
 
-**Settings** — theme (Light / Dark / AMOLED / High Contrast), 8 accent colors, font size, button size, animation speed, decimal precision, angle mode, history limit, layout density, sound effects (synthesized, no audio assets), haptic feedback (Vibration API), reduce‑motion override, reset to defaults.
+**Utility calculators** — Percentage (of / is-what-percent / % change), Discount, GST (add or extract), Tip (with split-by-people), BMI (metric or imperial, WHO category), Age (years/months/days + total days lived), Simple Interest, Compound Interest (yearly/half-yearly/quarterly/monthly), and EMI (loan amount, rate, tenure in years or months). Each is a pure, unit-tested calculation function plus a small, consistent form UI — reachable from the "Browse calculators" launcher (searchable, grouped by category) or a direct URL (`/bmi`, `/emi`, etc.), with the browser back button and offline navigation both working correctly.
+
+**Settings** — theme (Light / Dark / AMOLED / High Contrast), 8 accent colors, font size, button size, animation speed, decimal precision, angle mode, history limit, layout density, sound effects (synthesized, no audio assets), haptic feedback (Vibration API), reduce‑motion override, a default-calculator picker (or "remember last used"), reset to defaults.
 
 **Design** — glassmorphism surfaces, soft shadows, gradient backgrounds, animated tab indicator, button ripple/press feedback, shake‑on‑error, crossfading result transitions — all via Framer Motion and CSS custom properties, fully responsive from 320px phones to ultra‑wide desktops with zero horizontal overflow.
 
-**Platform** — installable PWA with offline support, WCAG AA–verified accessibility, keyboard‑first interaction, and a component architecture designed for the [30+ additional calculator modes](#roadmap) already stubbed in the mode registry.
+**Platform** — installable PWA with offline support (including deep-linked routes), WCAG AA–verified accessibility, keyboard‑first interaction, and a component architecture designed for the [remaining calculator modes](#roadmap) already stubbed in the mode registry.
 
 ## Tech stack
 
@@ -44,6 +46,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 | Framework          | React 19                                     |
 | Language           | TypeScript (strict)                          |
 | Build tool         | Vite                                         |
+| Routing            | React Router (declarative mode)              |
 | Math engine        | mathjs (number‑only build)                   |
 | Animation          | Framer Motion                                |
 | Icons              | react-icons                                  |
@@ -85,20 +88,24 @@ npm run dev       # http://localhost:5173
 src/
 ├── components/        # UI, one folder per component: X.tsx, X.module.css, index.ts
 │   ├── Button/ Display/ Keyboard/ Layout/ Navbar/ Sidebar/ Footer/
-│   ├── History/ Memory/ Settings/ Scientific/
-│   └── common/         # IconButton, Modal — generic, reused across features
-├── pages/              # CalculatorPage composes Layout + Display + Keyboard + panels
+│   ├── History/ Memory/ Settings/ Scientific/ Modes/
+│   └── common/         # IconButton, Modal, FormField, ResultCard, SegmentedControl,
+│                       # PageHeader, FormPage — generic, reused across every calculator
+├── pages/              # AppShell (chrome + all sidebars, via <Outlet/>), CalculatorPage
+│                       # (Standard/Scientific), and one page per utility calculator
 ├── context/            # React Context objects + hooks (*.ts) and Providers (*.tsx)
 ├── store/              # Pure reducers consumed by the context Providers
 ├── parser/             # sanitizeExpression + mathEngine (see Security below)
 ├── hooks/              # useCalculatorKeyboardShortcuts, useDialogA11y, ...
 ├── services/           # localStorage wrapper
 ├── constants/          # keypad layouts, theme tokens, calculator mode registry
+├── utils/
+│   └── calculations/   # pure, unit-tested math for every utility calculator
 ├── types/               # shared TypeScript types
 └── styles/             # global.css, themes.css (CSS custom properties)
 ```
 
-Each feature is a **context + reducer + provider + components** unit:
+**Routing**: `App.tsx` wraps every route in a single `AppShell`, which owns the Navbar, Footer, and all four Sidebars (History/Memory/Settings/"Browse calculators") and renders the active page via `<Outlet/>`. The calculator's expression state lives in `CalculatorProvider`, mounted once above the router — switching between `/` and `/scientific` is a route change that syncs `state.mode`, so the expression you were typing survives the switch. Utility calculator pages are unrelated, self-contained routes with their own local state.
 
 ```mermaid
 flowchart TB
@@ -108,13 +115,18 @@ flowchart TB
     HP --> MP[MemoryProvider]
     MP --> CP[CalculatorProvider]
   end
-  CP --> Page[CalculatorPage]
-  Page --> Display
-  Page --> Keyboard
-  Page --> HistorySidebar["Sidebar: HistoryPanel"]
-  Page --> MemorySidebar["Sidebar: MemoryPanel"]
-  Page --> SettingsSidebar["Sidebar: SettingsPanel"]
+  CP --> Shell["AppShell (Navbar, Footer, Sidebars)"]
+  Shell --> Outlet{{"<Outlet/>"}}
+  Outlet --> CalcPage["CalculatorPage (/ and /scientific)"]
+  Outlet --> UtilPages["9 utility calculator pages (/bmi, /emi, ...)"]
+  CalcPage --> Display
+  CalcPage --> Keyboard
+  Shell --> HistorySidebar["Sidebar: HistoryPanel"]
+  Shell --> MemorySidebar["Sidebar: MemoryPanel"]
+  Shell --> SettingsSidebar["Sidebar: SettingsPanel"]
+  Shell --> ModesSidebar["Sidebar: ModesLauncher"]
   Keyboard --> Engine[["parser/mathEngine (sanitize -> mathjs -> format)"]]
+  UtilPages --> Calc[["utils/calculations/* (pure, unit-tested)"]]
 ```
 
 **State flow** for a single calculation:
@@ -146,11 +158,14 @@ sequenceDiagram
 ```mermaid
 flowchart LR
   LS[(localStorage)]
-  LS -- "readFromStorage (guarded)" --> Settings & History & Memory
+  LS -- "readFromStorage (guarded)" --> Settings & History & Memory & AppShell
   Settings -- "writeToStorage" --> LS
   History -- "writeToStorage" --> LS
   Memory -- "writeToStorage" --> LS
+  AppShell -- "writeToStorage (last visited route)" --> LS
 ```
+
+`AppShell` also persists the current route on every navigation to a known calculator path, so Settings → "Default calculator" → "Remember last used" can send you back to whichever calculator you had open, on the next visit.
 
 `services/storage.ts` guards every read/write in `try/catch`, so a full quota, disabled storage (private browsing), or corrupted JSON degrades to in‑memory‑only behavior instead of crashing the app.
 
@@ -173,6 +188,7 @@ Verified with `jest-axe` (in the test suite, every panel/theme/modal combination
 - `role="dialog"` on `<aside>`/`<nav>` elements is invalid per ARIA (those elements carry their own implicit landmark role) — switched to plain `<div>`s with explicit roles.
 - 6 of 8 accent-color presets failed WCAG AA contrast against the white text used on filled buttons/tabs. Rather than force one text color across every hue (which would force yellow/teal into muddy browns), each preset now carries its own pre-verified contrast color.
 - The "danger" and "success" text colors in the Light theme were both under 4.5:1 against white.
+- The shared `SegmentedControl` (used by the theme picker, angle-mode toggle, and several utility calculators) didn't wrap, so a 3-4-option control silently overflowed the page horizontally on narrow phones — found via an automated 320px-width overflow check, not a visual scan.
 
 Also implemented: full keyboard navigation, a real Tab focus trap inside open dialogs (aware of nesting — a confirmation modal opened over a panel only lets the modal close on Escape), focus restored to the triggering element on close, `aria-live` regions on the display, visible focus rings, and a High Contrast theme whose accent is guaranteed rather than user-overridable. `prefers-reduced-motion` is respected two ways: CSS durations scale via a `--motion-scale` custom property, and Framer Motion's `<MotionConfig reducedMotion>` is driven by the same effective value (OS preference OR explicit Settings toggle).
 
@@ -182,12 +198,13 @@ Installable (valid manifest + service worker + icons), works fully offline (Work
 
 ## Testing
 
-129 tests across parser, reducers, hooks, components, integration, and accessibility (~89% statement coverage). Run `npm run test:coverage` for the full breakdown.
+170 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility (~90% statement coverage). Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
+- **Calculation tests** — every utility calculator's pure function (percentage, discount, GST, tip, BMI, age, simple/compound interest, EMI), including a hand-checked known-value case for EMI.
 - **Reducer unit tests** — calculator/history/memory/settings reducers tested as pure functions.
 - **Component tests** — Button, Display in isolation.
-- **Integration tests** — full user flows through `CalculatorPage` (calculate, error recovery, history reuse/delete/clear, memory MS/M+/M-/MC, every Settings control).
+- **Integration tests** — full user flows through `CalculatorPage` (calculate, error recovery, history reuse/delete/clear, memory MS/M+/M-/MC, every Settings control) and through the router (launcher search/navigation, deep-linking, the default-calculator redirect simulated across a real unmount/remount).
 - **Accessibility tests** — `jest-axe` on every panel/theme/modal state, focus management, keyboard-shortcut/native-control conflicts.
 
 ## Deployment
@@ -215,6 +232,8 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 ## Roadmap
 
-The architecture is intentionally ready for more calculator modes without restructuring: `src/constants/calculatorModes.ts` already registers 30+ planned tools (Programmer, Date/Age, BMI, Percentage, Discount, GST, EMI/Loan/Mortgage, Currency, Unit Converter, Tip/Split Bill, Investment/Compound/Simple Interest, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Statistics, Probability, Equation/Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter) with `status: 'coming-soon'`. Adding one is: a keypad/form under `components/`, a page under `pages/`, and flipping its registry entry to `'available'` — the parser, theme system, history/memory infrastructure, and Settings are all already shared.
+**Live now**: Standard, Scientific, Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI.
+
+The architecture is ready for the rest without restructuring: `src/constants/calculatorModes.ts` registers the remaining ~24 planned tools (Programmer, Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation/Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter) with `status: 'coming-soon'` — they already show up, greyed out, in the "Browse calculators" launcher. Adding one is: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and flipping its registry entry to `'available'`.
 
 Also on the roadmap: voice input/speech output, OCR/camera math scanning, natural-language calculation ("what is 15% of 800"), i18n/RTL, export (CSV/JSON/PDF), and a resizable desktop sidebar layout.

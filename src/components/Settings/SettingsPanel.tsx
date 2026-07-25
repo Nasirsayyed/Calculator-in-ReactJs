@@ -4,8 +4,11 @@ import { useSettings } from '@context/SettingsContext';
 import { Modal } from '@components/common/Modal';
 import { cx } from '@utils/classNames';
 import { ACCENT_PRESETS, THEMES } from '@constants/themes';
+import { CALCULATOR_MODES } from '@constants/calculatorModes';
 import type { LayoutDensity, ThemeName } from '@app-types/settings';
 import styles from './Settings.module.css';
+
+const AVAILABLE_MODES = CALCULATOR_MODES.filter((mode) => mode.status === 'available');
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -181,6 +184,23 @@ export function SettingsPanel() {
             </button>
           ))}
         </div>
+      </Section>
+
+      <Section title="Default calculator">
+        <select
+          className={styles.numberInput}
+          style={{ width: '100%' }}
+          aria-label="Default calculator"
+          value={settings.defaultMode}
+          onChange={(event) => dispatch({ type: 'SET_DEFAULT_MODE', modeId: event.target.value })}
+        >
+          <option value="last-used">Remember last used</option>
+          {AVAILABLE_MODES.map((mode) => (
+            <option key={mode.id} value={mode.id}>
+              {mode.label}
+            </option>
+          ))}
+        </select>
       </Section>
 
       <Section title="Preferences">

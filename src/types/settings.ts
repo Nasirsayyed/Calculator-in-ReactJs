@@ -17,4 +17,7 @@ export interface Settings {
   hapticsEnabled: boolean;
   layoutDensity: LayoutDensity;
   reducedMotion: boolean;
+  /** A calculator mode id (see CALCULATOR_MODES), or 'last-used' to reopen
+   * whichever calculator was open when the app was last closed. */
+  defaultMode: string;
 }

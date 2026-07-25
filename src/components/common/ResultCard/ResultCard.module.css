@@ -1,0 +1,36 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-unit) * 1.25);
+  padding: calc(var(--space-unit) * 2.5);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(var(--surface-blur));
+  box-shadow: var(--surface-shadow);
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--space-unit) * 1.5);
+}
+
+.label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.value {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.emphasis .value {
+  color: var(--accent);
+  font-size: 1.6rem;
+}

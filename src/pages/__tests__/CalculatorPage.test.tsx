@@ -1,13 +1,22 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppProviders } from '@context/AppProviders';
+import { AppShell } from '../AppShell';
 import { CalculatorPage } from '../CalculatorPage';
 
 function renderPage() {
   return render(
     <AppProviders>
-      <CalculatorPage />
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<CalculatorPage />} />
+            <Route path="/scientific" element={<CalculatorPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
     </AppProviders>,
   );
 }

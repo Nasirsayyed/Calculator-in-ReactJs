@@ -1,25 +1,26 @@
 import { motion } from 'framer-motion';
-import { FiClock, FiDatabase, FiMoon, FiSettings, FiSun } from 'react-icons/fi';
-import { useCalculator } from '@context/CalculatorContext';
+import { FiClock, FiDatabase, FiGrid, FiMoon, FiSettings, FiSun } from 'react-icons/fi';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSettings } from '@context/SettingsContext';
 import { IconButton } from '@components/common/IconButton';
 import { cx } from '@utils/classNames';
-import type { CalculatorMode } from '@app-types/calculator';
 import styles from './Navbar.module.css';
 
-const MODES: { id: CalculatorMode; label: string }[] = [
-  { id: 'standard', label: 'Standard' },
-  { id: 'scientific', label: 'Scientific' },
+const MODES: { path: string; label: string }[] = [
+  { path: '/', label: 'Standard' },
+  { path: '/scientific', label: 'Scientific' },
 ];
 
 export interface NavbarProps {
   onOpenHistory: () => void;
   onOpenMemory: () => void;
   onOpenSettings: () => void;
+  onOpenModes: () => void;
 }
 
-export function Navbar({ onOpenHistory, onOpenMemory, onOpenSettings }: NavbarProps) {
-  const { state, setMode } = useCalculator();
+export function Navbar({ onOpenHistory, onOpenMemory, onOpenSettings, onOpenModes }: NavbarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { settings, dispatch } = useSettings();
   const isDark = settings.theme === 'dark' || settings.theme === 'amoled';
 
@@ -32,25 +33,28 @@ export function Navbar({ onOpenHistory, onOpenMemory, onOpenSettings }: NavbarPr
       <span className={styles.brand}>Calculator</span>
 
       <div className={styles.tabs} role="tablist" aria-label="Calculator mode">
-        {MODES.map((mode) => (
-          <button
-            key={mode.id}
-            type="button"
-            role="tab"
-            aria-selected={state.mode === mode.id}
-            className={cx(styles.tab, state.mode === mode.id && styles.tabActive)}
-            onClick={() => setMode(mode.id)}
-          >
-            {state.mode === mode.id && (
-              <motion.span
-                layoutId="tab-indicator"
-                className={styles.tabIndicator}
-                transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-              />
-            )}
-            <span style={{ position: 'relative', zIndex: 1 }}>{mode.label}</span>
-          </button>
-        ))}
+        {MODES.map((mode) => {
+          const active = location.pathname === mode.path;
+          return (
+            <button
+              key={mode.path}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              className={cx(styles.tab, active && styles.tabActive)}
+              onClick={() => navigate(mode.path)}
+            >
+              {active && (
+                <motion.span
+                  layoutId="tab-indicator"
+                  className={styles.tabIndicator}
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                />
+              )}
+              <span style={{ position: 'relative', zIndex: 1 }}>{mode.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className={styles.actions}>
@@ -59,6 +63,9 @@ export function Navbar({ onOpenHistory, onOpenMemory, onOpenSettings }: NavbarPr
           onClick={toggleTheme}
         >
           {isDark ? <FiSun /> : <FiMoon />}
+        </IconButton>
+        <IconButton ariaLabel="Browse calculators" onClick={onOpenModes}>
+          <FiGrid />
         </IconButton>
         <IconButton ariaLabel="Open memory" onClick={onOpenMemory}>
           <FiDatabase />

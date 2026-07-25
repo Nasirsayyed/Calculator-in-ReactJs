@@ -8,9 +8,16 @@ export interface LayoutProps {
   onOpenHistory: () => void;
   onOpenMemory: () => void;
   onOpenSettings: () => void;
+  onOpenModes: () => void;
 }
 
-export function Layout({ children, onOpenHistory, onOpenMemory, onOpenSettings }: LayoutProps) {
+export function Layout({
+  children,
+  onOpenHistory,
+  onOpenMemory,
+  onOpenSettings,
+  onOpenModes,
+}: LayoutProps) {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
@@ -18,6 +25,7 @@ export function Layout({ children, onOpenHistory, onOpenMemory, onOpenSettings }
           onOpenHistory={onOpenHistory}
           onOpenMemory={onOpenMemory}
           onOpenSettings={onOpenSettings}
+          onOpenModes={onOpenModes}
         />
         <main className={styles.content}>{children}</main>
         <Footer />
