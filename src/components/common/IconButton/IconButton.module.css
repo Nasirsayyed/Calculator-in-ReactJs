@@ -1,0 +1,27 @@
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--surface-border);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  backdrop-filter: blur(var(--surface-blur));
+  transition:
+    background var(--motion-fast) ease,
+    color var(--motion-fast) ease;
+  font-size: 1.1rem;
+}
+
+.iconButton:hover {
+  background: var(--key-bg-hover);
+}
+
+.active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: transparent;
+}

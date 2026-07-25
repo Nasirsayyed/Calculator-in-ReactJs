@@ -1,0 +1,135 @@
+/**
+ * Design tokens for every theme. Each theme sets the same variable
+ * contract on `:root[data-theme="..."]`, so components never branch on
+ * theme name - they just consume the current value of a variable.
+ */
+
+:root {
+  /* Layout */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Motion: base durations scale with --motion-scale (driven by the
+     Animation Speed setting), and drop to ~0 when reduced motion applies. */
+  --motion-scale: 1;
+  --motion-fast: calc(120ms * var(--motion-scale));
+  --motion-base: calc(220ms * var(--motion-scale));
+  --motion-slow: calc(420ms * var(--motion-scale));
+  --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Density (comfortable by default, overridden by Settings) */
+  --space-unit: 8px;
+  --font-scale: 1;
+  --button-scale: 1;
+
+  --accent: #6c5ce7;
+  --accent-contrast: #ffffff;
+
+  --font-family:
+    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ---------- Light ---------- */
+:root[data-theme='light'] {
+  --bg-gradient: radial-gradient(circle at 20% -10%, #eef0ff 0%, #f4f5fb 45%, #eceef5 100%);
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-solid: #ffffff;
+  --surface-border: rgba(15, 17, 21, 0.08);
+  --surface-blur: 18px;
+  --surface-shadow: 0 8px 30px rgba(31, 33, 56, 0.1);
+
+  --text-primary: #14151a;
+  --text-secondary: rgba(20, 21, 26, 0.62);
+  --text-inverse: #ffffff;
+
+  --key-bg: rgba(255, 255, 255, 0.6);
+  --key-bg-hover: rgba(255, 255, 255, 0.85);
+  --key-bg-active: rgba(108, 92, 231, 0.16);
+  --key-operator-bg: rgba(108, 92, 231, 0.12);
+  --key-operator-text: var(--accent);
+
+  --success: #0f7a4e;
+  --danger: #c0392b;
+}
+
+/* ---------- Dark ---------- */
+:root[data-theme='dark'] {
+  --bg-gradient: radial-gradient(circle at 20% -10%, #22243a 0%, #16171f 45%, #101116 100%);
+  --surface: rgba(32, 34, 46, 0.6);
+  --surface-solid: #1b1c25;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-blur: 20px;
+  --surface-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+
+  --text-primary: #f4f5fb;
+  --text-secondary: rgba(244, 245, 251, 0.64);
+  --text-inverse: #14151a;
+
+  --key-bg: rgba(255, 255, 255, 0.06);
+  --key-bg-hover: rgba(255, 255, 255, 0.12);
+  --key-bg-active: rgba(108, 92, 231, 0.28);
+  --key-operator-bg: rgba(108, 92, 231, 0.22);
+  --key-operator-text: #b9adff;
+
+  --success: #35d68f;
+  --danger: #ff6b6f;
+}
+
+/* ---------- AMOLED (true black) ---------- */
+:root[data-theme='amoled'] {
+  --bg-gradient: #000000;
+  --surface: rgba(20, 20, 20, 0.7);
+  --surface-solid: #000000;
+  --surface-border: rgba(255, 255, 255, 0.1);
+  --surface-blur: 14px;
+  --surface-shadow: 0 0 0 rgba(0, 0, 0, 0);
+
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-inverse: #000000;
+
+  --key-bg: rgba(255, 255, 255, 0.05);
+  --key-bg-hover: rgba(255, 255, 255, 0.1);
+  --key-bg-active: rgba(108, 92, 231, 0.32);
+  --key-operator-bg: rgba(108, 92, 231, 0.22);
+  --key-operator-text: #c3b8ff;
+
+  --success: #35d68f;
+  --danger: #ff6b6f;
+}
+
+/* ---------- High contrast (WCAG AAA-leaning) ---------- */
+:root[data-theme='high-contrast'] {
+  --bg-gradient: #000000;
+  --surface: #000000;
+  --surface-solid: #000000;
+  --surface-border: #ffffff;
+  --surface-blur: 0px;
+  --surface-shadow: none;
+
+  --text-primary: #ffffff;
+  --text-secondary: #ffffff;
+  --text-inverse: #000000;
+
+  --key-bg: #000000;
+  --key-bg-hover: #1a1a1a;
+  --key-bg-active: #ffff00;
+  --key-operator-bg: #000000;
+  --key-operator-text: #ffff00;
+
+  --success: #00ff00;
+  --danger: #ff0000;
+  --accent: #ffff00;
+  --accent-contrast: #000000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-slow: 0ms;
+    --motion-scale: 0;
+  }
+}

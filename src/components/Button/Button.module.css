@@ -1,0 +1,94 @@
+.button {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  background: var(--key-bg);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: calc(1.15rem * var(--font-scale) * var(--button-scale));
+  font-weight: 500;
+  cursor: pointer;
+  padding: calc(var(--space-unit) * 2);
+  min-height: 48px;
+  backdrop-filter: blur(calc(var(--surface-blur) / 2));
+  transition:
+    background var(--motion-fast) ease,
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.button:hover {
+  background: var(--key-bg-hover);
+}
+
+.button:active {
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wide {
+  grid-column: span 2;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+}
+
+.operator {
+  background: var(--key-operator-bg);
+  color: var(--key-operator-text);
+  font-weight: 600;
+}
+
+.function {
+  color: var(--text-secondary);
+  font-size: calc(0.95rem * var(--font-scale) * var(--button-scale));
+}
+
+.equals {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.equals:hover {
+  filter: brightness(1.08);
+}
+
+.danger {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.25;
+  transform: scale(0);
+  animation: ripple calc(500ms * max(var(--motion-scale), 0.001)) ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}

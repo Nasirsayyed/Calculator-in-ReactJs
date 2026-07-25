@@ -1,0 +1,9 @@
+.keyboard {
+  display: grid;
+  gap: calc(var(--space-unit) * 1.25);
+}
+
+.row {
+  display: grid;
+  gap: calc(var(--space-unit) * 1.25);
+}
