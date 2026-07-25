@@ -11,6 +11,11 @@ import { AgePage } from '@pages/AgePage';
 import { SimpleInterestPage } from '@pages/SimpleInterestPage';
 import { CompoundInterestPage } from '@pages/CompoundInterestPage';
 import { EmiPage } from '@pages/EmiPage';
+import { LoanPage } from '@pages/LoanPage';
+import { MortgagePage } from '@pages/MortgagePage';
+import { InvestmentPage } from '@pages/InvestmentPage';
+import { ProfitLossPage } from '@pages/ProfitLossPage';
+import { MarginPage } from '@pages/MarginPage';
 
 function App() {
   return (
@@ -28,6 +33,11 @@ function App() {
           <Route path="/simple-interest" element={<SimpleInterestPage />} />
           <Route path="/compound-interest" element={<CompoundInterestPage />} />
           <Route path="/emi" element={<EmiPage />} />
+          <Route path="/loan" element={<LoanPage />} />
+          <Route path="/mortgage" element={<MortgagePage />} />
+          <Route path="/investment" element={<InvestmentPage />} />
+          <Route path="/profit-loss" element={<ProfitLossPage />} />
+          <Route path="/margin" element={<MarginPage />} />
         </Route>
       </Routes>
     </AppProviders>

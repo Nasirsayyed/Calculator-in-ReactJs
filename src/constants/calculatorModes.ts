@@ -71,14 +71,14 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Loan Calculator',
     path: '/loan',
     category: 'Finance',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'mortgage',
     label: 'Mortgage Calculator',
     path: '/mortgage',
     category: 'Finance',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'currency',
@@ -107,7 +107,7 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Investment Calculator',
     path: '/investment',
     category: 'Finance',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'compound-interest',
@@ -128,14 +128,14 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Profit & Loss',
     path: '/profit-loss',
     category: 'Finance',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'margin',
     label: 'Margin Calculator',
     path: '/margin',
     category: 'Finance',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'ratio',
