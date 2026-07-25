@@ -3,6 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AppProviders } from '@context/AppProviders';
 import { NaturalLanguageInput } from '../NaturalLanguageInput';
+import { recognizeMathExpression } from '@utils/ocr';
+
+vi.mock('@utils/ocr', () => ({
+  recognizeMathExpression: vi.fn(),
+}));
 
 class MockSpeechRecognition extends EventTarget {
   lang = '';
@@ -127,5 +132,79 @@ describe('NaturalLanguageInput - with Web Speech support', () => {
     await user.click(speakButton);
 
     expect(speak).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('NaturalLanguageInput - camera scan', () => {
+  beforeEach(() => {
+    vi.mocked(recognizeMathExpression).mockReset();
+  });
+
+  it('shows a scanning state, then evaluates the recognized expression', async () => {
+    const user = userEvent.setup();
+    let resolveRecognize: (value: string) => void = () => {};
+    vi.mocked(recognizeMathExpression).mockReturnValue(
+      new Promise((resolve) => {
+        resolveRecognize = resolve;
+      }),
+    );
+
+    render(
+      <AppProviders>
+        <NaturalLanguageInput />
+      </AppProviders>,
+    );
+
+    const file = new File(['fake-image'], 'photo.png', { type: 'image/png' });
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+    await user.upload(fileInput, file);
+
+    expect(screen.getByLabelText('Scanning photo…')).toBeDisabled();
+
+    resolveRecognize('12+34');
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Ask a calculation in plain English')).toHaveValue('');
+    });
+    expect(screen.getByLabelText('Scan a photo of a calculation')).toBeEnabled();
+  });
+
+  it('shows a scan-specific error when OCR finds nothing usable', async () => {
+    const user = userEvent.setup();
+    vi.mocked(recognizeMathExpression).mockResolvedValue('not a calculation');
+
+    render(
+      <AppProviders>
+        <NaturalLanguageInput />
+      </AppProviders>,
+    );
+
+    const file = new File(['fake-image'], 'photo.png', { type: 'image/png' });
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    await user.upload(fileInput, file);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Couldn’t read a calculation from that photo',
+    );
+  });
+
+  it('shows a scan-specific error when OCR itself throws', async () => {
+    const user = userEvent.setup();
+    vi.mocked(recognizeMathExpression).mockRejectedValue(new Error('model failed to load'));
+
+    render(
+      <AppProviders>
+        <NaturalLanguageInput />
+      </AppProviders>,
+    );
+
+    const file = new File(['fake-image'], 'photo.png', { type: 'image/png' });
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    await user.upload(fileInput, file);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Couldn’t read a calculation from that photo',
+    );
   });
 });

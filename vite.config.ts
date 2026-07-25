@@ -27,6 +27,13 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        // The self-hosted OCR engine (worker script, wasm core, trained data -
+        // see src/utils/ocr.ts) is ~14MB and only needed by the small minority
+        // of users who use camera math scanning. Precaching it on every
+        // install would make the PWA's initial download ~15x heavier for
+        // everyone else; it's fetched (and then cached by the browser) only
+        // on first actual use instead.
+        globIgnores: ['ocr/**'],
       },
     }),
   ],
