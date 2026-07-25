@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { convertCurrency } from '@utils/calculations/currency';
 import { formatNumber } from '@utils/formatNumber';
 
 export function CurrencyPage() {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState('');
   const [rate, setRate] = useState('');
 
@@ -13,12 +15,17 @@ export function CurrencyPage() {
 
   return (
     <FormPage
-      title="Currency Calculator"
+      title={t('pages.currency.title')}
       fields={
         <>
-          <FormField label="Amount" value={amount} onChange={setAmount} placeholder="0" />
           <FormField
-            label="Exchange rate (1 unit = ?)"
+            label={t('pages.currency.amount')}
+            value={amount}
+            onChange={setAmount}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.currency.exchangeRate')}
             value={rate}
             onChange={setRate}
             placeholder="1.00"
@@ -27,7 +34,13 @@ export function CurrencyPage() {
       }
       result={
         <ResultCard
-          rows={[{ label: 'Converted amount', value: formatNumber(converted, 4), emphasis: true }]}
+          rows={[
+            {
+              label: t('pages.currency.convertedAmount'),
+              value: formatNumber(converted, 4),
+              emphasis: true,
+            },
+          ]}
         />
       }
     />

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -8,16 +9,17 @@ import { formatNumber } from '@utils/formatNumber';
 
 type SubMode = 'simplify' | 'proportion';
 
-const MODES: { id: SubMode; label: string }[] = [
-  { id: 'simplify', label: 'Simplify a:b' },
-  { id: 'proportion', label: 'Solve a:b = c:x' },
-];
-
 export function RatioPage() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<SubMode>('simplify');
   const [a, setA] = useState('');
   const [b, setB] = useState('');
   const [c, setC] = useState('');
+
+  const MODES: { id: SubMode; label: string }[] = [
+    { id: 'simplify', label: t('pages.ratio.simplifyRatio') },
+    { id: 'proportion', label: t('pages.ratio.solveProportion') },
+  ];
 
   const aNum = Number(a) || 0;
   const bNum = Number(b) || 0;
@@ -29,7 +31,7 @@ export function RatioPage() {
           const { a: simplifiedA, b: simplifiedB } = simplifyRatio(aNum, bNum);
           return [
             {
-              label: 'Simplified ratio',
+              label: t('pages.ratio.simplifiedRatio'),
               value:
                 aNum && bNum
                   ? `${formatNumber(simplifiedA, 4)} : ${formatNumber(simplifiedB, 4)}`
@@ -48,11 +50,11 @@ export function RatioPage() {
 
   return (
     <FormPage
-      title="Ratio Calculator"
+      title={t('pages.ratio.title')}
       fields={
         <>
           <SegmentedControl
-            ariaLabel="Calculation type"
+            ariaLabel={t('pages.ratio.calculationType')}
             options={MODES}
             value={mode}
             onChange={setMode}

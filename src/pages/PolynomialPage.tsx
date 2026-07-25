@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { TextAreaField } from '@components/common/TextAreaField';
 import { FormField } from '@components/common/FormField';
@@ -15,17 +16,18 @@ import { formatNumber } from '@utils/formatNumber';
 
 type Operation = 'evaluate' | 'add' | 'multiply';
 
-const OPERATIONS: { id: Operation; label: string }[] = [
-  { id: 'evaluate', label: 'Evaluate P(x)' },
-  { id: 'add', label: 'P + Q' },
-  { id: 'multiply', label: 'P × Q' },
-];
-
 export function PolynomialPage() {
+  const { t } = useTranslation();
   const [operation, setOperation] = useState<Operation>('evaluate');
   const [p, setP] = useState('');
   const [q, setQ] = useState('');
   const [x, setX] = useState('');
+
+  const OPERATIONS: { id: Operation; label: string }[] = [
+    { id: 'evaluate', label: t('pages.polynomial.evaluateOp') },
+    { id: 'add', label: t('pages.polynomial.addOp') },
+    { id: 'multiply', label: t('pages.polynomial.multiplyOp') },
+  ];
 
   const coeffsP = parseNumberList(p);
   const coeffsQ = parseNumberList(q);
@@ -34,7 +36,7 @@ export function PolynomialPage() {
     operation === 'evaluate'
       ? [
           {
-            label: `P(${x || 0})`,
+            label: t('pages.polynomial.evaluateLabel', { x: x || 0 }),
             value: coeffsP.length
               ? formatNumber(evaluatePolynomial(coeffsP, Number(x) || 0), 4)
               : '—',
@@ -43,7 +45,7 @@ export function PolynomialPage() {
         ]
       : [
           {
-            label: 'Result',
+            label: t('pages.polynomial.result'),
             value:
               coeffsP.length || coeffsQ.length
                 ? formatPolynomial(
@@ -58,27 +60,27 @@ export function PolynomialPage() {
 
   return (
     <FormPage
-      title="Polynomial Calculator"
+      title={t('pages.polynomial.title')}
       fields={
         <>
           <SegmentedControl
-            ariaLabel="Operation"
+            ariaLabel={t('pages.polynomial.operation')}
             options={OPERATIONS}
             value={operation}
             onChange={setOperation}
           />
           <TextAreaField
-            label="P coefficients (constant term first)"
+            label={t('pages.polynomial.pCoefficients')}
             value={p}
             onChange={setP}
-            placeholder="e.g. 1, 3, 2 for 2x^2 + 3x + 1"
+            placeholder={t('pages.polynomial.pCoefficientsPlaceholder')}
           />
           {operation !== 'evaluate' && (
             <TextAreaField
-              label="Q coefficients (constant term first)"
+              label={t('pages.polynomial.qCoefficients')}
               value={q}
               onChange={setQ}
-              placeholder="e.g. -1, 1 for x - 1"
+              placeholder={t('pages.polynomial.qCoefficientsPlaceholder')}
             />
           )}
           {operation === 'evaluate' && (

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -7,6 +8,7 @@ import { formatNumber } from '@utils/formatNumber';
 import styles from './EquationSolverPage.module.css';
 
 export function EquationSolverPage() {
+  const { t } = useTranslation();
   const [a1, setA1] = useState('');
   const [b1, setB1] = useState('');
   const [c1, setC1] = useState('');
@@ -31,15 +33,18 @@ export function EquationSolverPage() {
         ]
       : [
           {
-            label: 'Solution',
-            value: solution.type === 'none' ? 'No solution' : 'Infinitely many solutions',
+            label: t('pages.equationSolver.solution'),
+            value:
+              solution.type === 'none'
+                ? t('pages.equationSolver.noSolution')
+                : t('pages.equationSolver.infiniteSolutions'),
             emphasis: true,
           },
         ];
 
   return (
     <FormPage
-      title="Equation Solver"
+      title={t('pages.equationSolver.title')}
       fields={
         <>
           <p className={styles.sectionLabel}>a₁x + b₁y = c₁</p>

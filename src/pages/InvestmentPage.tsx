@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { calculateInvestment } from '@utils/calculations/investment';
 import { formatNumber } from '@utils/formatNumber';
 
 export function InvestmentPage() {
+  const { t } = useTranslation();
   const [initial, setInitial] = useState('');
   const [monthly, setMonthly] = useState('');
   const [rate, setRate] = useState('');
@@ -20,33 +22,33 @@ export function InvestmentPage() {
 
   return (
     <FormPage
-      title="Investment Calculator"
+      title={t('pages.investment.title')}
       fields={
         <>
           <FormField
-            label="Initial investment"
+            label={t('pages.investment.initialInvestment')}
             value={initial}
             onChange={setInitial}
             placeholder="0"
           />
           <FormField
-            label="Monthly contribution"
+            label={t('pages.investment.monthlyContribution')}
             value={monthly}
             onChange={setMonthly}
             placeholder="0"
           />
           <FormField
-            label="Expected annual return"
+            label={t('pages.investment.expectedAnnualReturn')}
             value={rate}
             onChange={setRate}
             suffix="%"
             placeholder="0"
           />
           <FormField
-            label="Duration"
+            label={t('pages.investment.duration')}
             value={years}
             onChange={setYears}
-            suffix="years"
+            suffix={t('pages.investment.years')}
             placeholder="0"
           />
         </>
@@ -54,9 +56,19 @@ export function InvestmentPage() {
       result={
         <ResultCard
           rows={[
-            { label: 'Future value', value: formatNumber(futureValue, 2), emphasis: true },
-            { label: 'Total contributions', value: formatNumber(totalContributions, 2) },
-            { label: 'Interest earned', value: formatNumber(totalInterestEarned, 2) },
+            {
+              label: t('pages.investment.futureValue'),
+              value: formatNumber(futureValue, 2),
+              emphasis: true,
+            },
+            {
+              label: t('pages.investment.totalContributions'),
+              value: formatNumber(totalContributions, 2),
+            },
+            {
+              label: t('pages.investment.interestEarned'),
+              value: formatNumber(totalInterestEarned, 2),
+            },
           ]}
         />
       }

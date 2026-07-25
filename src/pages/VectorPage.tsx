@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { SegmentedControl } from '@components/common/SegmentedControl';
 import { ResultCard } from '@components/common/ResultCard';
@@ -15,11 +16,6 @@ import styles from './VectorPage.module.css';
 
 type Dimension = '2' | '3';
 type Operation = 'add' | 'subtract' | 'dot' | 'cross' | 'magnitude';
-
-const DIMENSIONS: { id: Dimension; label: string }[] = [
-  { id: '2', label: '2D' },
-  { id: '3', label: '3D' },
-];
 
 function useVectorInputs(size: number) {
   const [values, setValues] = useState<string[]>(Array(size).fill('0'));
@@ -41,6 +37,7 @@ function VectorInput({
   values: string[];
   onChange: (index: number, value: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <span className={styles.vectorLabel}>{label}</span>
@@ -51,7 +48,7 @@ function VectorInput({
             className={styles.cell}
             type="number"
             inputMode="decimal"
-            aria-label={`${label} component ${index + 1}`}
+            aria-label={t('pages.vector.componentAriaLabel', { label, index: index + 1 })}
             value={value}
             onChange={(event) => onChange(index, event.target.value)}
           />
@@ -62,11 +59,17 @@ function VectorInput({
 }
 
 export function VectorPage() {
+  const { t } = useTranslation();
   const [dimension, setDimension] = useState<Dimension>('3');
   const size = Number(dimension);
   const [operation, setOperation] = useState<Operation>('add');
   const vectorA = useVectorInputs(size);
   const vectorB = useVectorInputs(size);
+
+  const DIMENSIONS: { id: Dimension; label: string }[] = [
+    { id: '2', label: t('pages.vector.twoD') },
+    { id: '3', label: t('pages.vector.threeD') },
+  ];
 
   const operations: { id: Operation; label: string }[] = [
     { id: 'add', label: 'A + B' },
@@ -92,24 +95,32 @@ export function VectorPage() {
 
   return (
     <FormPage
-      title="Vector Calculator"
+      title={t('pages.vector.title')}
       fields={
         <>
           <SegmentedControl
-            ariaLabel="Dimension"
+            ariaLabel={t('pages.vector.dimension')}
             options={DIMENSIONS}
             value={dimension}
             onChange={setDimension}
           />
           <SegmentedControl
-            ariaLabel="Operation"
+            ariaLabel={t('pages.vector.operation')}
             options={operations}
             value={activeOperation}
             onChange={setOperation}
           />
-          <VectorInput label="Vector A" values={vectorA.values} onChange={vectorA.setComponent} />
+          <VectorInput
+            label={t('pages.vector.vectorA')}
+            values={vectorA.values}
+            onChange={vectorA.setComponent}
+          />
           {needsB && (
-            <VectorInput label="Vector B" values={vectorB.values} onChange={vectorB.setComponent} />
+            <VectorInput
+              label={t('pages.vector.vectorB')}
+              values={vectorB.values}
+              onChange={vectorB.setComponent}
+            />
           )}
         </>
       }
@@ -117,7 +128,7 @@ export function VectorPage() {
         <ResultCard
           rows={[
             {
-              label: 'Result',
+              label: t('pages.vector.result'),
               value:
                 scalarResult !== null
                   ? formatNumber(scalarResult, 4)

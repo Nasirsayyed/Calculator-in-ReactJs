@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { SelectField } from '@components/common/SelectField';
@@ -12,13 +13,6 @@ import {
 } from '@utils/calculations/programmerCalculator';
 import styles from './ProgrammerPage.module.css';
 
-const BASE_OPTIONS = [
-  { value: '2', label: 'Binary' },
-  { value: '8', label: 'Octal' },
-  { value: '10', label: 'Decimal' },
-  { value: '16', label: 'Hexadecimal' },
-];
-
 const OPERATIONS: { id: BitwiseOp; label: string }[] = [
   { id: 'AND', label: 'AND' },
   { id: 'OR', label: 'OR' },
@@ -29,24 +23,25 @@ const OPERATIONS: { id: BitwiseOp; label: string }[] = [
 ];
 
 function BasesDisplay({ title, bases }: { title: string; bases: AllBases }) {
+  const { t } = useTranslation();
   return (
     <div>
       <span className={styles.baseLabel}>{title}</span>
       <div className={styles.basesGrid}>
         <div className={styles.baseCell}>
-          <span className={styles.baseLabel}>Binary</span>
+          <span className={styles.baseLabel}>{t('pages.programmer.binary')}</span>
           <span className={styles.baseValue}>{bases.bin}</span>
         </div>
         <div className={styles.baseCell}>
-          <span className={styles.baseLabel}>Octal</span>
+          <span className={styles.baseLabel}>{t('pages.programmer.octal')}</span>
           <span className={styles.baseValue}>{bases.oct}</span>
         </div>
         <div className={styles.baseCell}>
-          <span className={styles.baseLabel}>Decimal</span>
+          <span className={styles.baseLabel}>{t('pages.programmer.decimal')}</span>
           <span className={styles.baseValue}>{bases.dec}</span>
         </div>
         <div className={styles.baseCell}>
-          <span className={styles.baseLabel}>Hex</span>
+          <span className={styles.baseLabel}>{t('pages.programmer.hex')}</span>
           <span className={styles.baseValue}>{bases.hex}</span>
         </div>
       </div>
@@ -55,6 +50,7 @@ function BasesDisplay({ title, bases }: { title: string; bases: AllBases }) {
 }
 
 export function ProgrammerPage() {
+  const { t } = useTranslation();
   const [inputBase, setInputBase] = useState('10');
   const [rawA, setRawA] = useState('0');
   const [rawB, setRawB] = useState('0');
@@ -68,27 +64,40 @@ export function ProgrammerPage() {
   const resultValue = bitwiseOperate(valueA, valueB, operation);
   const basesResult = toAllBases(resultValue);
 
+  const BASE_OPTIONS = [
+    { value: '2', label: t('pages.programmer.binary') },
+    { value: '8', label: t('pages.programmer.octal') },
+    { value: '10', label: t('pages.programmer.decimal') },
+    { value: '16', label: t('pages.programmer.hexadecimal') },
+  ];
+
   return (
     <FormPage
-      title="Programmer Calculator"
+      title={t('pages.programmer.title')}
       fields={
         <>
           <SelectField
-            label="Input base"
+            label={t('pages.programmer.inputBase')}
             value={inputBase}
             onChange={setInputBase}
             options={BASE_OPTIONS}
           />
-          <FormField label="Value A" type="text" value={rawA} onChange={setRawA} placeholder="0" />
+          <FormField
+            label={t('pages.programmer.valueA')}
+            type="text"
+            value={rawA}
+            onChange={setRawA}
+            placeholder="0"
+          />
           <SegmentedControl
-            ariaLabel="Bitwise operation"
+            ariaLabel={t('pages.programmer.bitwiseOperation')}
             options={OPERATIONS}
             value={operation}
             onChange={setOperation}
           />
           {operation !== 'NOT' && (
             <FormField
-              label="Value B"
+              label={t('pages.programmer.valueB')}
               type="text"
               value={rawB}
               onChange={setRawB}
@@ -99,8 +108,8 @@ export function ProgrammerPage() {
       }
       result={
         <>
-          <BasesDisplay title="A in all bases" bases={basesA} />
-          <BasesDisplay title={`Result (32-bit unsigned)`} bases={basesResult} />
+          <BasesDisplay title={t('pages.programmer.aInAllBases')} bases={basesA} />
+          <BasesDisplay title={t('pages.programmer.resultInAllBases')} bases={basesResult} />
         </>
       }
     />

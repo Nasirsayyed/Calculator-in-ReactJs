@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,15 +7,16 @@ import { SegmentedControl } from '@components/common/SegmentedControl';
 import { calculateGst, type GstMode } from '@utils/calculations/gst';
 import { formatNumber } from '@utils/formatNumber';
 
-const MODES: { id: GstMode; label: string }[] = [
-  { id: 'add', label: 'Add GST' },
-  { id: 'remove', label: 'Remove GST' },
-];
-
 export function GstPage() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<GstMode>('add');
   const [amount, setAmount] = useState('');
   const [rate, setRate] = useState('18');
+
+  const MODES: { id: GstMode; label: string }[] = [
+    { id: 'add', label: t('pages.gst.addGst') },
+    { id: 'remove', label: t('pages.gst.removeGst') },
+  ];
 
   const { baseAmount, gstAmount, totalAmount } = calculateGst(
     Number(amount) || 0,
@@ -24,25 +26,40 @@ export function GstPage() {
 
   return (
     <FormPage
-      title="GST Calculator"
+      title={t('pages.gst.title')}
       fields={
         <>
-          <SegmentedControl ariaLabel="GST mode" options={MODES} value={mode} onChange={setMode} />
+          <SegmentedControl
+            ariaLabel={t('pages.gst.gstMode')}
+            options={MODES}
+            value={mode}
+            onChange={setMode}
+          />
           <FormField
-            label={mode === 'add' ? 'Amount (excl. GST)' : 'Amount (incl. GST)'}
+            label={mode === 'add' ? t('pages.gst.amountExclGst') : t('pages.gst.amountInclGst')}
             value={amount}
             onChange={setAmount}
             placeholder="0"
           />
-          <FormField label="GST rate" value={rate} onChange={setRate} suffix="%" placeholder="0" />
+          <FormField
+            label={t('pages.gst.gstRate')}
+            value={rate}
+            onChange={setRate}
+            suffix="%"
+            placeholder="0"
+          />
         </>
       }
       result={
         <ResultCard
           rows={[
-            { label: 'Base amount', value: formatNumber(baseAmount, 2) },
-            { label: 'GST amount', value: formatNumber(gstAmount, 2) },
-            { label: 'Total amount', value: formatNumber(totalAmount, 2), emphasis: true },
+            { label: t('pages.gst.baseAmount'), value: formatNumber(baseAmount, 2) },
+            { label: t('pages.gst.gstAmount'), value: formatNumber(gstAmount, 2) },
+            {
+              label: t('pages.gst.totalAmount'),
+              value: formatNumber(totalAmount, 2),
+              emphasis: true,
+            },
           ]}
         />
       }

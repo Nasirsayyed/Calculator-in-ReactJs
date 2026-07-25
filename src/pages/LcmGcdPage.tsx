@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { TextAreaField } from '@components/common/TextAreaField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { parseNumberList } from '@utils/calculations/average';
 import { calculateLcmGcd } from '@utils/calculations/lcmGcd';
 
 export function LcmGcdPage() {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const values = parseNumberList(input);
   const { gcd, lcm } = calculateLcmGcd(values);
@@ -13,20 +15,20 @@ export function LcmGcdPage() {
 
   return (
     <FormPage
-      title="LCM / GCD Calculator"
+      title={t('pages.lcmGcd.title')}
       fields={
         <TextAreaField
-          label="Numbers (comma or space separated)"
+          label={t('pages.lcmGcd.numbers')}
           value={input}
           onChange={setInput}
-          placeholder="e.g. 12, 18, 24"
+          placeholder={t('pages.lcmGcd.placeholderExample')}
         />
       }
       result={
         <ResultCard
           rows={[
-            { label: 'GCD', value: hasResult ? String(gcd) : '—', emphasis: true },
-            { label: 'LCM', value: hasResult ? String(lcm) : '—' },
+            { label: t('pages.lcmGcd.gcd'), value: hasResult ? String(gcd) : '—', emphasis: true },
+            { label: t('pages.lcmGcd.lcm'), value: hasResult ? String(lcm) : '—' },
           ]}
         />
       }

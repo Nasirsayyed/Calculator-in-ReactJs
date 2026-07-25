@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { Button } from '@components/Button';
 import { generateRandomIntegers } from '@utils/calculations/randomNumber';
 
 export function RandomNumberPage() {
+  const { t } = useTranslation();
   const [min, setMin] = useState('1');
   const [max, setMax] = useState('100');
   const [count, setCount] = useState('1');
@@ -17,14 +19,29 @@ export function RandomNumberPage() {
 
   return (
     <FormPage
-      title="Random Number Generator"
+      title={t('pages.randomNumber.title')}
       fields={
         <>
-          <FormField label="Minimum" value={min} onChange={setMin} placeholder="1" />
-          <FormField label="Maximum" value={max} onChange={setMax} placeholder="100" />
-          <FormField label="How many" value={count} onChange={setCount} placeholder="1" />
+          <FormField
+            label={t('pages.randomNumber.minimum')}
+            value={min}
+            onChange={setMin}
+            placeholder="1"
+          />
+          <FormField
+            label={t('pages.randomNumber.maximum')}
+            value={max}
+            onChange={setMax}
+            placeholder="100"
+          />
+          <FormField
+            label={t('pages.randomNumber.howMany')}
+            value={count}
+            onChange={setCount}
+            placeholder="1"
+          />
           <Button onClick={handleGenerate} variant="equals" wide>
-            Generate
+            {t('pages.randomNumber.generate')}
           </Button>
         </>
       }
@@ -32,7 +49,7 @@ export function RandomNumberPage() {
         <ResultCard
           rows={[
             {
-              label: 'Result',
+              label: t('pages.randomNumber.result'),
               value: results.length ? results.join(', ') : '—',
               emphasis: true,
             },

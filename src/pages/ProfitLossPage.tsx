@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { calculateProfitLoss } from '@utils/calculations/profitLoss';
 import { formatNumber } from '@utils/formatNumber';
 
 export function ProfitLossPage() {
+  const { t } = useTranslation();
   const [costPrice, setCostPrice] = useState('');
   const [sellingPrice, setSellingPrice] = useState('');
 
@@ -16,12 +18,17 @@ export function ProfitLossPage() {
 
   return (
     <FormPage
-      title="Profit & Loss Calculator"
+      title={t('pages.profitLoss.title')}
       fields={
         <>
-          <FormField label="Cost price" value={costPrice} onChange={setCostPrice} placeholder="0" />
           <FormField
-            label="Selling price"
+            label={t('pages.profitLoss.costPrice')}
+            value={costPrice}
+            onChange={setCostPrice}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.profitLoss.sellingPrice')}
             value={sellingPrice}
             onChange={setSellingPrice}
             placeholder="0"
@@ -31,8 +38,12 @@ export function ProfitLossPage() {
       result={
         <ResultCard
           rows={[
-            { label: isProfit ? 'Profit' : 'Loss', value: formatNumber(amount, 2), emphasis: true },
-            { label: 'Percentage', value: `${formatNumber(percent, 2)}%` },
+            {
+              label: isProfit ? t('pages.profitLoss.profit') : t('pages.profitLoss.loss'),
+              value: formatNumber(amount, 2),
+              emphasis: true,
+            },
+            { label: t('pages.profitLoss.percentage'), value: `${formatNumber(percent, 2)}%` },
           ]}
         />
       }

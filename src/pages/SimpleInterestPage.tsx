@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { calculateSimpleInterest } from '@utils/calculations/simpleInterest';
 import { formatNumber } from '@utils/formatNumber';
 
 export function SimpleInterestPage() {
+  const { t } = useTranslation();
   const [principal, setPrincipal] = useState('');
   const [rate, setRate] = useState('');
   const [years, setYears] = useState('');
@@ -18,22 +20,27 @@ export function SimpleInterestPage() {
 
   return (
     <FormPage
-      title="Simple Interest Calculator"
+      title={t('pages.simpleInterest.title')}
       fields={
         <>
-          <FormField label="Principal" value={principal} onChange={setPrincipal} placeholder="0" />
           <FormField
-            label="Annual rate"
+            label={t('pages.simpleInterest.principal')}
+            value={principal}
+            onChange={setPrincipal}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.simpleInterest.annualRate')}
             value={rate}
             onChange={setRate}
             suffix="%"
             placeholder="0"
           />
           <FormField
-            label="Time"
+            label={t('pages.simpleInterest.time')}
             value={years}
             onChange={setYears}
-            suffix="years"
+            suffix={t('pages.simpleInterest.years')}
             placeholder="0"
           />
         </>
@@ -41,8 +48,12 @@ export function SimpleInterestPage() {
       result={
         <ResultCard
           rows={[
-            { label: 'Interest', value: formatNumber(interest, 2) },
-            { label: 'Total amount', value: formatNumber(totalAmount, 2), emphasis: true },
+            { label: t('pages.simpleInterest.interest'), value: formatNumber(interest, 2) },
+            {
+              label: t('pages.simpleInterest.totalAmount'),
+              value: formatNumber(totalAmount, 2),
+              emphasis: true,
+            },
           ]}
         />
       }

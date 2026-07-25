@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { SegmentedControl } from '@components/common/SegmentedControl';
 import { ResultCard } from '@components/common/ResultCard';
@@ -44,6 +45,7 @@ function MatrixGrid({
   values: string[];
   onChange: (index: number, value: string) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <span className={styles.matrixLabel}>{label}</span>
@@ -54,7 +56,7 @@ function MatrixGrid({
             className={styles.cell}
             type="number"
             inputMode="decimal"
-            aria-label={`${label} cell ${index + 1}`}
+            aria-label={t('pages.matrix.cellAriaLabel', { label, index: index + 1 })}
             value={value}
             onChange={(event) => onChange(index, event.target.value)}
           />
@@ -65,6 +67,7 @@ function MatrixGrid({
 }
 
 export function MatrixPage() {
+  const { t } = useTranslation();
   const [operation, setOperation] = useState<Operation>('add');
   const matrixA = useMatrixInputs();
   const matrixB = useMatrixInputs();
@@ -84,25 +87,39 @@ export function MatrixPage() {
 
   return (
     <FormPage
-      title="Matrix Calculator (2×2)"
+      title={t('pages.matrix.title')}
       fields={
         <>
           <SegmentedControl
-            ariaLabel="Operation"
+            ariaLabel={t('pages.matrix.operation')}
             options={OPERATIONS}
             value={operation}
             onChange={setOperation}
           />
-          <MatrixGrid label="Matrix A" values={matrixA.values} onChange={matrixA.setCell} />
+          <MatrixGrid
+            label={t('pages.matrix.matrixA')}
+            values={matrixA.values}
+            onChange={matrixA.setCell}
+          />
           {needsB && (
-            <MatrixGrid label="Matrix B" values={matrixB.values} onChange={matrixB.setCell} />
+            <MatrixGrid
+              label={t('pages.matrix.matrixB')}
+              values={matrixB.values}
+              onChange={matrixB.setCell}
+            />
           )}
         </>
       }
       result={
         scalarResult !== null ? (
           <ResultCard
-            rows={[{ label: 'Determinant', value: formatNumber(scalarResult, 6), emphasis: true }]}
+            rows={[
+              {
+                label: t('pages.matrix.determinant'),
+                value: formatNumber(scalarResult, 6),
+                emphasis: true,
+              },
+            ]}
           />
         ) : (
           <div className={styles.resultGrid}>

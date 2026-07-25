@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -9,6 +10,7 @@ function today(): string {
 }
 
 export function AgePage() {
+  const { t } = useTranslation();
   const [birthDate, setBirthDate] = useState('');
   const [asOfDate, setAsOfDate] = useState(today());
 
@@ -18,22 +20,35 @@ export function AgePage() {
 
   return (
     <FormPage
-      title="Age Calculator"
+      title={t('pages.age.title')}
       fields={
         <>
-          <FormField label="Date of birth" type="date" value={birthDate} onChange={setBirthDate} />
-          <FormField label="As of" type="date" value={asOfDate} onChange={setAsOfDate} />
+          <FormField
+            label={t('pages.age.dateOfBirth')}
+            type="date"
+            value={birthDate}
+            onChange={setBirthDate}
+          />
+          <FormField
+            label={t('pages.age.asOf')}
+            type="date"
+            value={asOfDate}
+            onChange={setAsOfDate}
+          />
         </>
       }
       result={
         <ResultCard
           rows={[
             {
-              label: 'Age',
+              label: t('pages.age.age'),
               value: result ? `${result.years}y ${result.months}m ${result.days}d` : '—',
               emphasis: true,
             },
-            { label: 'Total days lived', value: result ? result.totalDays.toLocaleString() : '—' },
+            {
+              label: t('pages.age.totalDaysLived'),
+              value: result ? result.totalDays.toLocaleString() : '—',
+            },
           ]}
         />
       }

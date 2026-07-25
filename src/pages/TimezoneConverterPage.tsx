@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { SelectField } from '@components/common/SelectField';
@@ -15,6 +16,7 @@ function nowAsDateTimeLocal(): string {
 }
 
 export function TimezoneConverterPage() {
+  const { t } = useTranslation();
   const zones = useMemo(() => getSupportedTimeZones(), []);
   const [dateTime, setDateTime] = useState(nowAsDateTimeLocal());
   const [fromZone, setFromZone] = useState('UTC');
@@ -25,23 +27,23 @@ export function TimezoneConverterPage() {
 
   return (
     <FormPage
-      title="Timezone Converter"
+      title={t('pages.timezoneConverter.title')}
       fields={
         <>
           <FormField
-            label="Date & time"
+            label={t('pages.timezoneConverter.dateTime')}
             type="datetime-local"
             value={dateTime}
             onChange={setDateTime}
           />
           <SelectField
-            label="From timezone"
+            label={t('pages.timezoneConverter.fromTimezone')}
             value={fromZone}
             onChange={setFromZone}
             options={zoneOptions}
           />
           <SelectField
-            label="To timezone"
+            label={t('pages.timezoneConverter.toTimezone')}
             value={toZone}
             onChange={setToZone}
             options={zoneOptions}
@@ -49,7 +51,15 @@ export function TimezoneConverterPage() {
         </>
       }
       result={
-        <ResultCard rows={[{ label: 'Converted time', value: result || '—', emphasis: true }]} />
+        <ResultCard
+          rows={[
+            {
+              label: t('pages.timezoneConverter.convertedTime'),
+              value: result || '—',
+              emphasis: true,
+            },
+          ]}
+        />
       }
     />
   );

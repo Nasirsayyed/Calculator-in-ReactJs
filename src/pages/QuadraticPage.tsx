@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { solveQuadratic } from '@utils/calculations/quadratic';
 import { formatNumber } from '@utils/formatNumber';
 
 export function QuadraticPage() {
+  const { t } = useTranslation();
   const [a, setA] = useState('');
   const [b, setB] = useState('');
   const [c, setC] = useState('');
@@ -20,7 +22,7 @@ export function QuadraticPage() {
 
   return (
     <FormPage
-      title="Quadratic Solver"
+      title={t('pages.quadratic.title')}
       fields={
         <>
           <FormField label="a" value={a} onChange={setA} placeholder="1" />
@@ -31,8 +33,11 @@ export function QuadraticPage() {
       result={
         <ResultCard
           rows={[
-            { label: 'Roots', value: rootsLabel, emphasis: true },
-            { label: 'Discriminant', value: formatNumber(result.discriminant, 4) },
+            { label: t('pages.quadratic.roots'), value: rootsLabel, emphasis: true },
+            {
+              label: t('pages.quadratic.discriminant'),
+              value: formatNumber(result.discriminant, 4),
+            },
           ]}
         />
       }

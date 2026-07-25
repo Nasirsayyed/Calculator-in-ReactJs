@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { calculateSplitBill } from '@utils/calculations/splitBill';
 import { formatNumber } from '@utils/formatNumber';
 
 export function SplitBillPage() {
+  const { t } = useTranslation();
   const [bill, setBill] = useState('');
   const [people, setPeople] = useState('');
   const [tip, setTip] = useState('');
@@ -18,24 +20,40 @@ export function SplitBillPage() {
 
   return (
     <FormPage
-      title="Split Bill Calculator"
+      title={t('pages.splitBill.title')}
       fields={
         <>
-          <FormField label="Bill amount" value={bill} onChange={setBill} placeholder="0" />
-          <FormField label="Number of people" value={people} onChange={setPeople} placeholder="0" />
-          <FormField label="Tip" value={tip} onChange={setTip} suffix="%" placeholder="0" />
+          <FormField
+            label={t('pages.splitBill.billAmount')}
+            value={bill}
+            onChange={setBill}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.splitBill.numberOfPeople')}
+            value={people}
+            onChange={setPeople}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.splitBill.tip')}
+            value={tip}
+            onChange={setTip}
+            suffix="%"
+            placeholder="0"
+          />
         </>
       }
       result={
         <ResultCard
           rows={[
             {
-              label: 'Each person pays',
+              label: t('pages.splitBill.eachPersonPays'),
               value: formatNumber(amountPerPerson, 2),
               emphasis: true,
             },
-            { label: 'Tip amount', value: formatNumber(tipAmount, 2) },
-            { label: 'Total with tip', value: formatNumber(totalWithTip, 2) },
+            { label: t('pages.splitBill.tipAmount'), value: formatNumber(tipAmount, 2) },
+            { label: t('pages.splitBill.totalWithTip'), value: formatNumber(totalWithTip, 2) },
           ]}
         />
       }

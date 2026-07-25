@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { SelectField } from '@components/common/SelectField';
@@ -7,6 +8,7 @@ import { UNIT_CATEGORIES, convertUnit, type UnitCategory } from '@utils/calculat
 import { formatNumber } from '@utils/formatNumber';
 
 export function UnitConverterPage() {
+  const { t } = useTranslation();
   const [category, setCategory] = useState<UnitCategory>('length');
   const [value, setValue] = useState('');
 
@@ -29,24 +31,29 @@ export function UnitConverterPage() {
 
   return (
     <FormPage
-      title="Unit Converter"
+      title={t('pages.unitConverter.title')}
       fields={
         <>
           <SelectField
-            label="Category"
+            label={t('pages.unitConverter.category')}
             value={category}
             onChange={handleCategoryChange}
             options={UNIT_CATEGORIES.map((entry) => ({ value: entry.id, label: entry.label }))}
           />
-          <FormField label="Value" value={value} onChange={setValue} placeholder="0" />
+          <FormField
+            label={t('pages.unitConverter.value')}
+            value={value}
+            onChange={setValue}
+            placeholder="0"
+          />
           <SelectField
-            label="From"
+            label={t('pages.unitConverter.from')}
             value={fromUnit}
             onChange={setFromUnit}
             options={units.map((unit) => ({ value: unit.id, label: unit.label }))}
           />
           <SelectField
-            label="To"
+            label={t('pages.unitConverter.to')}
             value={toUnit}
             onChange={setToUnit}
             options={units.map((unit) => ({ value: unit.id, label: unit.label }))}
@@ -54,7 +61,15 @@ export function UnitConverterPage() {
         </>
       }
       result={
-        <ResultCard rows={[{ label: 'Result', value: formatNumber(result, 6), emphasis: true }]} />
+        <ResultCard
+          rows={[
+            {
+              label: t('pages.unitConverter.result'),
+              value: formatNumber(result, 6),
+              emphasis: true,
+            },
+          ]}
+        />
       }
     />
   );

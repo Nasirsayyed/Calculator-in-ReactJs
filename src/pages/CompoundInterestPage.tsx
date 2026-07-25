@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,18 +7,21 @@ import { SegmentedControl } from '@components/common/SegmentedControl';
 import { calculateCompoundInterest } from '@utils/calculations/compoundInterest';
 import { formatNumber } from '@utils/formatNumber';
 
-const FREQUENCIES = [
-  { id: '1', label: 'Yearly' },
-  { id: '2', label: 'Half-yearly' },
-  { id: '4', label: 'Quarterly' },
-  { id: '12', label: 'Monthly' },
-] as const;
+type FrequencyId = '1' | '2' | '4' | '12';
 
 export function CompoundInterestPage() {
+  const { t } = useTranslation();
   const [principal, setPrincipal] = useState('');
   const [rate, setRate] = useState('');
   const [years, setYears] = useState('');
-  const [frequency, setFrequency] = useState<(typeof FREQUENCIES)[number]['id']>('1');
+  const [frequency, setFrequency] = useState<FrequencyId>('1');
+
+  const FREQUENCIES: { id: FrequencyId; label: string }[] = [
+    { id: '1', label: t('pages.compoundInterest.yearly') },
+    { id: '2', label: t('pages.compoundInterest.halfYearly') },
+    { id: '4', label: t('pages.compoundInterest.quarterly') },
+    { id: '12', label: t('pages.compoundInterest.monthly') },
+  ];
 
   const { interest, totalAmount } = calculateCompoundInterest(
     Number(principal) || 0,
@@ -28,27 +32,32 @@ export function CompoundInterestPage() {
 
   return (
     <FormPage
-      title="Compound Interest Calculator"
+      title={t('pages.compoundInterest.title')}
       fields={
         <>
-          <FormField label="Principal" value={principal} onChange={setPrincipal} placeholder="0" />
           <FormField
-            label="Annual rate"
+            label={t('pages.compoundInterest.principal')}
+            value={principal}
+            onChange={setPrincipal}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.compoundInterest.annualRate')}
             value={rate}
             onChange={setRate}
             suffix="%"
             placeholder="0"
           />
           <FormField
-            label="Time"
+            label={t('pages.compoundInterest.time')}
             value={years}
             onChange={setYears}
-            suffix="years"
+            suffix={t('pages.compoundInterest.years')}
             placeholder="0"
           />
           <SegmentedControl
-            ariaLabel="Compounding frequency"
-            options={[...FREQUENCIES]}
+            ariaLabel={t('pages.compoundInterest.compoundingFrequency')}
+            options={FREQUENCIES}
             value={frequency}
             onChange={setFrequency}
           />
@@ -57,8 +66,12 @@ export function CompoundInterestPage() {
       result={
         <ResultCard
           rows={[
-            { label: 'Interest', value: formatNumber(interest, 2) },
-            { label: 'Total amount', value: formatNumber(totalAmount, 2), emphasis: true },
+            { label: t('pages.compoundInterest.interest'), value: formatNumber(interest, 2) },
+            {
+              label: t('pages.compoundInterest.totalAmount'),
+              value: formatNumber(totalAmount, 2),
+              emphasis: true,
+            },
           ]}
         />
       }

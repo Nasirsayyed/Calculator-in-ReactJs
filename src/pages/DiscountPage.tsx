@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { calculateDiscount } from '@utils/calculations/discount';
 import { formatNumber } from '@utils/formatNumber';
 
 export function DiscountPage() {
+  const { t } = useTranslation();
   const [price, setPrice] = useState('');
   const [percent, setPercent] = useState('');
 
@@ -16,12 +18,17 @@ export function DiscountPage() {
 
   return (
     <FormPage
-      title="Discount Calculator"
+      title={t('pages.discount.title')}
       fields={
         <>
-          <FormField label="Original price" value={price} onChange={setPrice} placeholder="0" />
           <FormField
-            label="Discount"
+            label={t('pages.discount.originalPrice')}
+            value={price}
+            onChange={setPrice}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.discount.discount')}
             value={percent}
             onChange={setPercent}
             suffix="%"
@@ -32,8 +39,12 @@ export function DiscountPage() {
       result={
         <ResultCard
           rows={[
-            { label: 'You save', value: formatNumber(discountAmount, 2) },
-            { label: 'Final price', value: formatNumber(finalPrice, 2), emphasis: true },
+            { label: t('pages.discount.youSave'), value: formatNumber(discountAmount, 2) },
+            {
+              label: t('pages.discount.finalPrice'),
+              value: formatNumber(finalPrice, 2),
+              emphasis: true,
+            },
           ]}
         />
       }

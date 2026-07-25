@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { TextAreaField } from '@components/common/TextAreaField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -7,6 +8,7 @@ import { calculateStatistics } from '@utils/calculations/statistics';
 import { formatNumber } from '@utils/formatNumber';
 
 export function StatisticsPage() {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const values = parseNumberList(input);
   const { mean, range, populationVariance, populationStdDev, sampleVariance, sampleStdDev } =
@@ -15,34 +17,38 @@ export function StatisticsPage() {
 
   return (
     <FormPage
-      title="Statistics Calculator"
+      title={t('pages.statistics.title')}
       fields={
         <TextAreaField
-          label="Numbers (comma or space separated)"
+          label={t('pages.statistics.numbers')}
           value={input}
           onChange={setInput}
-          placeholder="e.g. 2, 4, 4, 4, 5, 5, 7, 9"
+          placeholder={t('pages.statistics.placeholderExample')}
         />
       }
       result={
         <ResultCard
           rows={[
-            { label: 'Mean', value: hasResult ? formatNumber(mean, 4) : '—', emphasis: true },
-            { label: 'Range', value: hasResult ? formatNumber(range, 4) : '—' },
             {
-              label: 'Std deviation (population)',
+              label: t('pages.statistics.mean'),
+              value: hasResult ? formatNumber(mean, 4) : '—',
+              emphasis: true,
+            },
+            { label: t('pages.statistics.range'), value: hasResult ? formatNumber(range, 4) : '—' },
+            {
+              label: t('pages.statistics.stdDevPopulation'),
               value: hasResult ? formatNumber(populationStdDev, 4) : '—',
             },
             {
-              label: 'Variance (population)',
+              label: t('pages.statistics.variancePopulation'),
               value: hasResult ? formatNumber(populationVariance, 4) : '—',
             },
             {
-              label: 'Std deviation (sample)',
+              label: t('pages.statistics.stdDevSample'),
               value: hasResult ? formatNumber(sampleStdDev, 4) : '—',
             },
             {
-              label: 'Variance (sample)',
+              label: t('pages.statistics.varianceSample'),
               value: hasResult ? formatNumber(sampleVariance, 4) : '—',
             },
           ]}

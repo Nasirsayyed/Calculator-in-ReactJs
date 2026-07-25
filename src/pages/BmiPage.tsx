@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -8,15 +9,16 @@ import { formatNumber } from '@utils/formatNumber';
 
 type Units = 'metric' | 'imperial';
 
-const UNIT_OPTIONS: { id: Units; label: string }[] = [
-  { id: 'metric', label: 'Metric (cm/kg)' },
-  { id: 'imperial', label: 'Imperial (in/lb)' },
-];
-
 export function BmiPage() {
+  const { t } = useTranslation();
   const [units, setUnits] = useState<Units>('metric');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
+
+  const UNIT_OPTIONS: { id: Units; label: string }[] = [
+    { id: 'metric', label: t('pages.bmi.metric') },
+    { id: 'imperial', label: t('pages.bmi.imperial') },
+  ];
 
   const { bmi, category } =
     units === 'metric'
@@ -25,24 +27,24 @@ export function BmiPage() {
 
   return (
     <FormPage
-      title="BMI Calculator"
+      title={t('pages.bmi.title')}
       fields={
         <>
           <SegmentedControl
-            ariaLabel="Unit system"
+            ariaLabel={t('pages.bmi.unitSystem')}
             options={UNIT_OPTIONS}
             value={units}
             onChange={setUnits}
           />
           <FormField
-            label="Height"
+            label={t('pages.bmi.height')}
             value={height}
             onChange={setHeight}
             suffix={units === 'metric' ? 'cm' : 'in'}
             placeholder="0"
           />
           <FormField
-            label="Weight"
+            label={t('pages.bmi.weight')}
             value={weight}
             onChange={setWeight}
             suffix={units === 'metric' ? 'kg' : 'lb'}
@@ -53,8 +55,12 @@ export function BmiPage() {
       result={
         <ResultCard
           rows={[
-            { label: 'BMI', value: bmi > 0 ? formatNumber(bmi, 1) : '—', emphasis: true },
-            { label: 'Category', value: category },
+            {
+              label: t('pages.bmi.bmi'),
+              value: bmi > 0 ? formatNumber(bmi, 1) : '—',
+              emphasis: true,
+            },
+            { label: t('pages.bmi.category'), value: category },
           ]}
         />
       }

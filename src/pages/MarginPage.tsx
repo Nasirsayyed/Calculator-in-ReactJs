@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FormPage } from '@components/common/FormPage';
 import { FormField } from '@components/common/FormField';
 import { ResultCard } from '@components/common/ResultCard';
@@ -6,6 +7,7 @@ import { calculateMargin } from '@utils/calculations/margin';
 import { formatNumber } from '@utils/formatNumber';
 
 export function MarginPage() {
+  const { t } = useTranslation();
   const [cost, setCost] = useState('');
   const [revenue, setRevenue] = useState('');
 
@@ -16,23 +18,33 @@ export function MarginPage() {
 
   return (
     <FormPage
-      title="Margin Calculator"
+      title={t('pages.margin.title')}
       fields={
         <>
-          <FormField label="Cost" value={cost} onChange={setCost} placeholder="0" />
-          <FormField label="Revenue" value={revenue} onChange={setRevenue} placeholder="0" />
+          <FormField
+            label={t('pages.margin.cost')}
+            value={cost}
+            onChange={setCost}
+            placeholder="0"
+          />
+          <FormField
+            label={t('pages.margin.revenue')}
+            value={revenue}
+            onChange={setRevenue}
+            placeholder="0"
+          />
         </>
       }
       result={
         <ResultCard
           rows={[
-            { label: 'Profit', value: formatNumber(profit, 2) },
+            { label: t('pages.margin.profit'), value: formatNumber(profit, 2) },
             {
-              label: 'Gross margin',
+              label: t('pages.margin.grossMargin'),
               value: `${formatNumber(grossMarginPercent, 2)}%`,
               emphasis: true,
             },
-            { label: 'Markup', value: `${formatNumber(markupPercent, 2)}%` },
+            { label: t('pages.margin.markup'), value: `${formatNumber(markupPercent, 2)}%` },
           ]}
         />
       }
