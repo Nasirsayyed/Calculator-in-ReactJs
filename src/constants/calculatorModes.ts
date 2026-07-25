@@ -85,14 +85,14 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Currency Calculator',
     path: '/currency',
     category: 'Finance',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'unit-converter',
     label: 'Unit Converter',
     path: '/convert',
     category: 'Utility',
-    status: 'coming-soon',
+    status: 'available',
   },
   { id: 'tip', label: 'Tip Calculator', path: '/tip', category: 'Utility', status: 'available' },
   {
@@ -100,7 +100,7 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Split Bill Calculator',
     path: '/split-bill',
     category: 'Utility',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'investment',
@@ -142,14 +142,14 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Ratio Calculator',
     path: '/ratio',
     category: 'Utility',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'average',
     label: 'Average Calculator',
     path: '/average',
     category: 'Utility',
-    status: 'coming-soon',
+    status: 'available',
   },
   { id: 'lcm-gcd', label: 'LCM / GCD', path: '/lcm-gcd', category: 'Math', status: 'coming-soon' },
   {

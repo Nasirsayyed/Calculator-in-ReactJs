@@ -1,0 +1,28 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.select {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  background: var(--key-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: calc(var(--space-unit) * 1.25) calc(var(--space-unit) * 1.5);
+}
+
+.select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

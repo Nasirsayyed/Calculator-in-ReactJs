@@ -16,6 +16,11 @@ import { MortgagePage } from '@pages/MortgagePage';
 import { InvestmentPage } from '@pages/InvestmentPage';
 import { ProfitLossPage } from '@pages/ProfitLossPage';
 import { MarginPage } from '@pages/MarginPage';
+import { SplitBillPage } from '@pages/SplitBillPage';
+import { RatioPage } from '@pages/RatioPage';
+import { AveragePage } from '@pages/AveragePage';
+import { CurrencyPage } from '@pages/CurrencyPage';
+import { UnitConverterPage } from '@pages/UnitConverterPage';
 
 function App() {
   return (
@@ -38,6 +43,11 @@ function App() {
           <Route path="/investment" element={<InvestmentPage />} />
           <Route path="/profit-loss" element={<ProfitLossPage />} />
           <Route path="/margin" element={<MarginPage />} />
+          <Route path="/split-bill" element={<SplitBillPage />} />
+          <Route path="/ratio" element={<RatioPage />} />
+          <Route path="/average" element={<AveragePage />} />
+          <Route path="/currency" element={<CurrencyPage />} />
+          <Route path="/convert" element={<UnitConverterPage />} />
         </Route>
       </Routes>
     </AppProviders>
