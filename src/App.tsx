@@ -26,6 +26,12 @@ import { StatisticsPage } from '@pages/StatisticsPage';
 import { ProbabilityPage } from '@pages/ProbabilityPage';
 import { QuadraticPage } from '@pages/QuadraticPage';
 import { EquationSolverPage } from '@pages/EquationSolverPage';
+import { MatrixPage } from '@pages/MatrixPage';
+import { VectorPage } from '@pages/VectorPage';
+import { PolynomialPage } from '@pages/PolynomialPage';
+import { BaseConverterPage } from '@pages/BaseConverterPage';
+import { RomanNumeralPage } from '@pages/RomanNumeralPage';
+import { TimezoneConverterPage } from '@pages/TimezoneConverterPage';
 
 function App() {
   return (
@@ -58,6 +64,12 @@ function App() {
           <Route path="/probability" element={<ProbabilityPage />} />
           <Route path="/quadratic" element={<QuadraticPage />} />
           <Route path="/equation-solver" element={<EquationSolverPage />} />
+          <Route path="/matrix" element={<MatrixPage />} />
+          <Route path="/vector" element={<VectorPage />} />
+          <Route path="/polynomial" element={<PolynomialPage />} />
+          <Route path="/base-converter" element={<BaseConverterPage />} />
+          <Route path="/roman-numeral" element={<RomanNumeralPage />} />
+          <Route path="/timezone" element={<TimezoneConverterPage />} />
         </Route>
       </Routes>
     </AppProviders>

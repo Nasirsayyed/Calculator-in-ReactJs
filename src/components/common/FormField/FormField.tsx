@@ -5,7 +5,7 @@ export interface FormFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  type?: 'number' | 'date';
+  type?: 'number' | 'date' | 'text' | 'datetime-local';
   suffix?: string;
   placeholder?: string;
   min?: number;

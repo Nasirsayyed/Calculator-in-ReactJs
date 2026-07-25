@@ -65,10 +65,8 @@ describe('Modes launcher navigation', () => {
 
     await user.click(screen.getByRole('button', { name: 'Browse calculators' }));
     const dialog = screen.getByRole('dialog', { name: 'Calculators' });
-    expect(
-      within(dialog).queryByRole('link', { name: 'Matrix Calculator' }),
-    ).not.toBeInTheDocument();
-    expect(within(dialog).getByText('Matrix Calculator')).toHaveAttribute('aria-disabled', 'true');
+    expect(within(dialog).queryByRole('link', { name: 'Programmer' })).not.toBeInTheDocument();
+    expect(within(dialog).getByText('Programmer')).toHaveAttribute('aria-disabled', 'true');
   });
 });
 
