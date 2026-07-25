@@ -23,7 +23,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 
 ## Features
 
-**Standard mode** — addition, subtraction, multiplication, division, decimal input, percentage, sign toggle, clear/delete, live result preview, keyboard input, animated results, and a natural-language input ("what is 15% of 800", "5 plus 3", "square root of 16") that translates plain English into a calculator expression before evaluating it through the same secure pipeline.
+**Standard mode** — addition, subtraction, multiplication, division, decimal input, percentage, sign toggle, clear/delete, live result preview, keyboard input, animated results, and a natural-language input ("what is 15% of 800", "5 plus 3", "square root of 16") that translates plain English into a calculator expression before evaluating it through the same secure pipeline. Voice input (speak instead of type - transcribed speech goes through the same natural-language translation) and voice output (read the last result aloud) are built on the browser's native Web Speech API, feature-detected so the mic/speaker buttons simply don't render in a browser without support - no server-side speech API or API key involved.
 
 **Scientific mode** — sin/cos/tan and their inverses, sinh/cosh/tanh, log (base‑10) and ln, √ and ∛, `x^y`/`x²`/`x³`, `x!`, `1/x`, `|x|`, `mod`, floor/ceil/round/sign, π/e, degree/radian toggle, auto‑completion of missing closing parentheses.
 
@@ -213,7 +213,7 @@ Installable (valid manifest + service worker + icons), works fully offline (Work
 
 ## Testing
 
-347 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
+351 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
 - **Calculation tests** — every calculator's pure function (all 32, from Percentage through Matrix/Vector/Polynomial and the Programmer bitwise ops), including hand-checked known-value cases (EMI, a 3×3 determinant, a fixed-offset timezone conversion, `MCMXCIV`, etc.).
@@ -249,4 +249,4 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 **Live now**: all 35 modes in `src/constants/calculatorModes.ts` are `status: 'available'` — Standard, Scientific, Programmer, and every planned finance/health/math/utility calculator (Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation Solver, Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter, plus the original Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI). The registry's `status` field and the launcher's coming-soon styling remain in place for any future mode — adding one is still just: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`SelectField`/`TextAreaField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and a registry entry.
 
-Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, and a resizable desktop sidebar layout. i18n covers the app chrome (see [Features](#features)); translating each of the 32 calculator pages' own field labels is a natural follow-on but wasn't done here.
+Not yet built, and out of scope for this pass: OCR/camera math scanning, and a resizable desktop sidebar layout. i18n covers the app chrome (see [Features](#features)); translating each of the 32 calculator pages' own field labels is a natural follow-on but wasn't done here.
