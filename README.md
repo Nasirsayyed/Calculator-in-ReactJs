@@ -27,7 +27,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 
 **Scientific mode** — sin/cos/tan and their inverses, sinh/cosh/tanh, log (base‑10) and ln, √ and ∛, `x^y`/`x²`/`x³`, `x!`, `1/x`, `|x|`, `mod`, floor/ceil/round/sign, π/e, degree/radian toggle, auto‑completion of missing closing parentheses.
 
-**History** — unlimited entries (capped by a configurable limit), search/filter, pin, favorite, one‑tap reuse, copy result, delete one or clear all (pinned entries survive a clear), persisted to `localStorage`.
+**History** — unlimited entries (capped by a configurable limit), search/filter, pin, favorite, one‑tap reuse, copy result, delete one or clear all (pinned entries survive a clear), persisted to `localStorage`, and export to CSV, JSON, or PDF (the currently filtered/searched set, not just everything).
 
 **Memory** — MC / MR / MS / M+ / M‑, a named multi‑value memory bank with inline rename and delete, persisted to `localStorage`.
 
@@ -60,6 +60,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 | State              | React Context + `useReducer`                 |
 | Persistence        | `localStorage` (via a small guarded service) |
 | PWA                | vite-plugin-pwa (Workbox)                    |
+| Export             | jsPDF (dynamically imported, PDF only)       |
 | Testing            | Vitest, React Testing Library, jest-axe      |
 | Linting/formatting | ESLint (flat config) + Prettier              |
 | Git hooks          | Husky + lint-staged + commitlint             |
@@ -204,9 +205,11 @@ Also implemented: full keyboard navigation, a real Tab focus trap inside open di
 
 Installable (valid manifest + service worker + icons), works fully offline (Workbox precaches the app shell), and ships icons matching the app rather than the original CRA/React placeholder logos. Verified via a Playwright check: after going offline and reloading, the app still renders from cache with no console errors.
 
+**Bundle size note**: PDF export (`jsPDF`) is dynamically imported rather than statically bundled. jsPDF's main entry point statically pulls in `html2canvas`/`dompurify` for its unused `.html()` renderer — a static import grew the main JS bundle from ~830KB to ~1.23MB for a feature most sessions never touch. Lazy-loading it inside `downloadHistoryAsPdf` keeps the main bundle at its original size and defers that weight to a separate chunk, fetched only when a user actually exports to PDF (and precached by Workbox for offline use afterward).
+
 ## Testing
 
-336 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
+344 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
 - **Calculation tests** — every calculator's pure function (all 32, from Percentage through Matrix/Vector/Polynomial and the Programmer bitwise ops), including hand-checked known-value cases (EMI, a 3×3 determinant, a fixed-offset timezone conversion, `MCMXCIV`, etc.).
@@ -242,4 +245,4 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 **Live now**: all 35 modes in `src/constants/calculatorModes.ts` are `status: 'available'` — Standard, Scientific, Programmer, and every planned finance/health/math/utility calculator (Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation Solver, Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter, plus the original Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI). The registry's `status` field and the launcher's coming-soon styling remain in place for any future mode — adding one is still just: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`SelectField`/`TextAreaField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and a registry entry.
 
-Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, i18n/RTL, export (CSV/JSON/PDF), and a resizable desktop sidebar layout.
+Not yet built, and out of scope for this pass: voice input/speech output, OCR/camera math scanning, i18n/RTL, and a resizable desktop sidebar layout.

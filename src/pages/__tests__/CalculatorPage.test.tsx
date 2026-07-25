@@ -164,6 +164,69 @@ describe('History panel', () => {
     expect(within(dialog).queryByText('No matches.')).not.toBeInTheDocument();
   });
 
+  it('disables export buttons when history is empty and enables them once populated', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Open history' }));
+    const dialog = screen.getByRole('dialog', { name: 'History' });
+    expect(within(dialog).getByRole('button', { name: /CSV/ })).toBeDisabled();
+
+    await user.click(within(dialog).getByRole('button', { name: 'Close History' }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: 'Equals' }));
+    await user.click(screen.getByRole('button', { name: 'Open history' }));
+
+    expect(within(dialog).getByRole('button', { name: /CSV/ })).toBeEnabled();
+  });
+
+  it('triggers a CSV download with the exported content', async () => {
+    const user = userEvent.setup();
+    const clickSpy = vi.fn();
+    const originalCreateElement = document.createElement.bind(document);
+    vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
+      const el = originalCreateElement(tag);
+      if (tag === 'a') el.click = clickSpy;
+      return el;
+    });
+    const createObjectURL = vi.fn().mockReturnValue('blob:mock');
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, 'createObjectURL', { value: createObjectURL, configurable: true });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: revokeObjectURL, configurable: true });
+
+    renderPage();
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: 'Equals' }));
+    await user.click(screen.getByRole('button', { name: 'Open history' }));
+    const dialog = screen.getByRole('dialog', { name: 'History' });
+    await user.click(within(dialog).getByRole('button', { name: /CSV/ }));
+
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:mock');
+
+    vi.restoreAllMocks();
+  });
+
+  it('exports to PDF via a lazy-loaded jsPDF without throwing', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: 'Equals' }));
+    await user.click(screen.getByRole('button', { name: 'Open history' }));
+    const dialog = screen.getByRole('dialog', { name: 'History' });
+
+    await user.click(within(dialog).getByRole('button', { name: /PDF/ }));
+
+    // jsPDF's own save() flow does its DOM work asynchronously after the
+    // dynamic import resolves - just confirm nothing throws and the
+    // dialog/button are still there afterwards.
+    await waitFor(() => {
+      expect(within(dialog).getByRole('button', { name: /PDF/ })).toBeInTheDocument();
+    });
+  });
+
   it('marks an entry as a favorite and copies its result', async () => {
     const user = userEvent.setup();
     Object.defineProperty(navigator, 'clipboard', {

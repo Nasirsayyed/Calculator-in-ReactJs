@@ -1,9 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { FiCheck, FiCopy, FiSearch, FiStar, FiMapPin, FiTrash2 } from 'react-icons/fi';
+import { FiCheck, FiCopy, FiDownload, FiSearch, FiStar, FiMapPin, FiTrash2 } from 'react-icons/fi';
 import { useHistory } from '@context/HistoryContext';
 import { Modal } from '@components/common/Modal';
 import { cx } from '@utils/classNames';
+import {
+  downloadHistoryAsCsv,
+  downloadHistoryAsJson,
+  downloadHistoryAsPdf,
+} from '@utils/exportHistory';
 import type { HistoryEntry } from '@app-types/history';
 import styles from './History.module.css';
 
@@ -74,6 +79,33 @@ export function HistoryPanel({ onReuse }: HistoryPanelProps) {
           onClick={() => setConfirmOpen(true)}
         >
           Clear all
+        </button>
+      </div>
+
+      <div className={styles.exportRow}>
+        <button
+          type="button"
+          className={styles.exportButton}
+          disabled={filtered.length === 0}
+          onClick={() => downloadHistoryAsCsv(filtered)}
+        >
+          <FiDownload aria-hidden="true" /> CSV
+        </button>
+        <button
+          type="button"
+          className={styles.exportButton}
+          disabled={filtered.length === 0}
+          onClick={() => downloadHistoryAsJson(filtered)}
+        >
+          <FiDownload aria-hidden="true" /> JSON
+        </button>
+        <button
+          type="button"
+          className={styles.exportButton}
+          disabled={filtered.length === 0}
+          onClick={() => downloadHistoryAsPdf(filtered)}
+        >
+          <FiDownload aria-hidden="true" /> PDF
         </button>
       </div>
 

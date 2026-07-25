@@ -37,6 +37,36 @@
   cursor: not-allowed;
 }
 
+.exportRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--space-unit) * 1);
+}
+
+.exportButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.exportButton:hover:not(:disabled) {
+  background: var(--key-bg-hover);
+  color: var(--text-primary);
+}
+
+.exportButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .empty {
   color: var(--text-secondary);
   font-size: 0.9rem;
