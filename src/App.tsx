@@ -32,6 +32,9 @@ import { PolynomialPage } from '@pages/PolynomialPage';
 import { BaseConverterPage } from '@pages/BaseConverterPage';
 import { RomanNumeralPage } from '@pages/RomanNumeralPage';
 import { TimezoneConverterPage } from '@pages/TimezoneConverterPage';
+import { DateCalculatorPage } from '@pages/DateCalculatorPage';
+import { ProgrammerPage } from '@pages/ProgrammerPage';
+import { RandomNumberPage } from '@pages/RandomNumberPage';
 
 function App() {
   return (
@@ -70,6 +73,9 @@ function App() {
           <Route path="/base-converter" element={<BaseConverterPage />} />
           <Route path="/roman-numeral" element={<RomanNumeralPage />} />
           <Route path="/timezone" element={<TimezoneConverterPage />} />
+          <Route path="/date" element={<DateCalculatorPage />} />
+          <Route path="/programmer" element={<ProgrammerPage />} />
+          <Route path="/random" element={<RandomNumberPage />} />
         </Route>
       </Routes>
     </AppProviders>

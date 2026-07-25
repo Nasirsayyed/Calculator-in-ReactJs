@@ -9,6 +9,7 @@ import { PercentagePage } from '../PercentagePage';
 import { BmiPage } from '../BmiPage';
 import { EmiPage } from '../EmiPage';
 import { AgePage } from '../AgePage';
+import { CALCULATOR_MODES } from '@constants/calculatorModes';
 
 function renderApp(initialPath: string) {
   return render(
@@ -59,14 +60,17 @@ describe('Modes launcher navigation', () => {
     expect(within(dialog).queryByText('BMI Calculator')).not.toBeInTheDocument();
   });
 
-  it('does not let you click into a coming-soon calculator', async () => {
+  it('renders every registered calculator mode as a clickable link', async () => {
     const user = userEvent.setup();
     renderApp('/');
 
     await user.click(screen.getByRole('button', { name: 'Browse calculators' }));
     const dialog = screen.getByRole('dialog', { name: 'Calculators' });
-    expect(within(dialog).queryByRole('link', { name: 'Programmer' })).not.toBeInTheDocument();
-    expect(within(dialog).getByText('Programmer')).toHaveAttribute('aria-disabled', 'true');
+
+    expect(CALCULATOR_MODES.every((mode) => mode.status === 'available')).toBe(true);
+    for (const mode of CALCULATOR_MODES) {
+      expect(within(dialog).getByRole('link', { name: mode.label })).toBeInTheDocument();
+    }
   });
 });
 

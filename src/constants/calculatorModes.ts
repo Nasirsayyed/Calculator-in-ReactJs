@@ -27,14 +27,14 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Programmer',
     path: '/programmer',
     category: 'Core',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'date',
     label: 'Date Calculator',
     path: '/date',
     category: 'Health & Date',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'age',
@@ -157,7 +157,7 @@ export const CALCULATOR_MODES: CalculatorModeDescriptor[] = [
     label: 'Random Number Generator',
     path: '/random',
     category: 'Utility',
-    status: 'coming-soon',
+    status: 'available',
   },
   {
     id: 'statistics',
