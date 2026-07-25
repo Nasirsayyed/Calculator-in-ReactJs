@@ -3,4 +3,5 @@ export const STORAGE_KEYS = {
   history: 'calculator.history',
   memory: 'calculator.memory',
   lastVisitedPath: 'calculator.lastVisitedPath',
+  sidebarWidth: 'calculator.sidebarWidth',
 } as const;

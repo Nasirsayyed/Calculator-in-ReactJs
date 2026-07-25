@@ -46,7 +46,7 @@ This repository was rebuilt from a single-file Create React App calculator into 
 
 **Design** — glassmorphism surfaces, soft shadows, gradient backgrounds, animated tab indicator, button ripple/press feedback, shake‑on‑error, crossfading result transitions — all via Framer Motion and CSS custom properties, fully responsive from 320px phones to ultra‑wide desktops with zero horizontal overflow.
 
-**Platform** — installable PWA with offline support (including deep-linked routes), WCAG AA–verified accessibility, keyboard‑first interaction, and a component architecture that grew from 11 to 35 live calculator modes without a rewrite (see [Roadmap](#roadmap)).
+**Platform** — installable PWA with offline support (including deep-linked routes), WCAG AA–verified accessibility, keyboard‑first interaction, a component architecture that grew from 11 to 35 live calculator modes without a rewrite (see [Roadmap](#roadmap)), and drag-to-resize History/Memory/Settings/Modes drawers at desktop widths (the drag handle is hidden below 768px, where the drawers already fill the screen and resizing wouldn't mean anything) with the chosen width persisted across sessions.
 
 ## Tech stack
 
@@ -213,7 +213,7 @@ Installable (valid manifest + service worker + icons), works fully offline (Work
 
 ## Testing
 
-351 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
+355 tests across parser, calculation utilities, reducers, hooks, components, integration, and accessibility. Run `npm run test:coverage` for the full breakdown.
 
 - **Parser/security tests** — arithmetic correctness, every scientific function, angle-mode switching, the string-literal injection vector, malformed input, overly long input.
 - **Calculation tests** — every calculator's pure function (all 32, from Percentage through Matrix/Vector/Polynomial and the Programmer bitwise ops), including hand-checked known-value cases (EMI, a 3×3 determinant, a fixed-offset timezone conversion, `MCMXCIV`, etc.).
@@ -249,4 +249,4 @@ The `Dockerfile` is a multi-stage build (Node 22 → `npm ci && npm run build`, 
 
 **Live now**: all 35 modes in `src/constants/calculatorModes.ts` are `status: 'available'` — Standard, Scientific, Programmer, and every planned finance/health/math/utility calculator (Date, Loan, Mortgage, Currency, Unit Converter, Split Bill, Investment, Profit & Loss, Margin, Ratio, Average, LCM/GCD, Random, Statistics, Probability, Equation Solver, Quadratic Solver, Matrix, Vector, Polynomial, Base Converter, Roman Numeral, Timezone Converter, plus the original Percentage, Discount, GST, Tip, BMI, Age, Simple Interest, Compound Interest, EMI). The registry's `status` field and the launcher's coming-soon styling remain in place for any future mode — adding one is still just: a calculation function under `utils/calculations/` (+ tests), a page under `pages/` using the shared `FormPage`/`FormField`/`SelectField`/`TextAreaField`/`ResultCard`/`SegmentedControl` primitives, a route in `App.tsx`, and a registry entry.
 
-Not yet built, and out of scope for this pass: OCR/camera math scanning, and a resizable desktop sidebar layout. i18n covers the app chrome (see [Features](#features)); translating each of the 32 calculator pages' own field labels is a natural follow-on but wasn't done here.
+Not yet built, and out of scope for this pass: OCR/camera math scanning. i18n covers the app chrome (see [Features](#features)); translating each of the 32 calculator pages' own field labels is a natural follow-on but wasn't done here.
